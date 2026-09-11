@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="You Matter is a quiet place for hope, reflection, and meaningful connection.">
+    <title>You Matter | A place to breathe and begin again</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #20352f;
+            --muted: #66766d;
+            --moss: #446653;
+            --leaf: #87a68b;
+            --cream: #f6f2e9;
+            --paper: #fffdf8;
+            --sun: #e7a95b;
+            --line: rgba(32, 53, 47, .13);
+            --shadow: 0 24px 70px rgba(33, 52, 43, .12);
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            color: var(--ink);
+            background: var(--cream);
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.6;
+        }
+        a { color: inherit; text-decoration: none; }
+        button, input, select, textarea { font: inherit; }
+        button { cursor: pointer; }
+        .container { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+        .site-header {
+            position: fixed; z-index: 10; top: 0; width: 100%;
+            background: rgba(255, 253, 248, .84); border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(16px);
+        }
+        .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 30px; }
+        .brand { display: flex; align-items: center; gap: 10px; font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; }
+        .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; color: #fff; border-radius: 50%; background: var(--moss); font-size: 1rem; }
+        .nav-links { display: flex; align-items: center; gap: 26px; font-size: .87rem; color: var(--muted); }
+        .nav-links a:hover { color: var(--ink); }
+        .nav-cta, .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 100px; padding: 12px 20px; background: var(--moss); color: #fff; font-weight: 700; transition: transform .2s, background .2s; }
+        .nav-cta:hover, .button:hover { transform: translateY(-2px); background: #2f4d3b; }
+        .button.light { background: #fff; color: var(--ink); }
+        .button.outline { background: transparent; border: 1px solid var(--line); color: var(--ink); }
+
+        .hero { min-height: 780px; display: flex; align-items: center; position: relative; overflow: hidden; background: linear-gradient(90deg, rgba(21, 46, 38, .76), rgba(21, 46, 38, .22)), url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=2200&q=85') center/cover; color: #fff; }
+        .hero::after { content: ''; position: absolute; inset: auto 0 0; height: 150px; background: linear-gradient(transparent, var(--cream)); }
+        .hero-content { position: relative; z-index: 1; width: min(670px, 100%); padding-top: 90px; animation: rise .8s ease both; }
+        .eyebrow { display: inline-flex; align-items: center; gap: 10px; letter-spacing: .13em; text-transform: uppercase; font-size: .72rem; font-weight: 700; }
+        .eyebrow::before { content: ''; width: 32px; height: 1px; background: currentColor; }
+        h1, h2, h3 { margin: 0; font-family: 'Playfair Display', serif; line-height: 1.12; }
+        h1 { max-width: 650px; margin-top: 22px; font-size: clamp(3.5rem, 8vw, 6.6rem); letter-spacing: -.04em; }
+        .hero p { max-width: 520px; margin: 28px 0 32px; color: rgba(255,255,255,.86); font-size: 1.1rem; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+        .intro { padding: 100px 0 70px; }
+        .section-heading { max-width: 650px; margin-bottom: 42px; }
+        .section-heading .eyebrow { color: var(--moss); margin-bottom: 16px; }
+        h2 { font-size: clamp(2.3rem, 5vw, 4rem); letter-spacing: -.035em; }
+        .section-heading p { margin: 18px 0 0; color: var(--muted); font-size: 1.05rem; }
+        .theme-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 16px 0; margin-bottom: 28px; }
+        .theme-bar label { color: var(--muted); font-size: .9rem; }
+        select { border: 1px solid var(--line); border-radius: 100px; padding: 10px 36px 10px 15px; color: var(--ink); background: var(--paper); }
+        .paths { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .path-card { min-height: 235px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; padding: 26px; border: 1px solid var(--line); background: var(--paper); transition: transform .25s, box-shadow .25s; }
+        .path-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 92px; background-position: center; background-size: cover; opacity: .9; }
+        .path-card[data-theme="hope"]::before { background-image: linear-gradient(90deg, rgba(32,53,47,.38), rgba(32,53,47,.04)), url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=80'); }
+        .path-card[data-theme="strength"]::before { background-image: linear-gradient(90deg, rgba(32,53,47,.42), rgba(32,53,47,.05)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80'); }
+        .path-card[data-theme="peace"]::before { background-image: linear-gradient(90deg, rgba(32,53,47,.4), rgba(32,53,47,.04)), url('https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=80'); }
+        .path-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+        .path-top, .path-card > div:last-child { position: relative; z-index: 1; }
+        .path-top { display: flex; justify-content: space-between; color: #fff; font-size: .8rem; font-weight: 700; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+        .path-card h3 { margin: 30px 0 10px; font-size: 1.65rem; }
+        .path-card p { margin: 0; color: var(--muted); font-size: .95rem; }
+        .path-icon { font-size: 1.5rem; }
+        .paths-cta { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 28px; padding: 26px 30px; color: #fff; background: var(--moss); }
+        .paths-cta p { max-width: 680px; margin: 0; font-family: 'Playfair Display', serif; font-size: clamp(1.25rem, 2.5vw, 1.8rem); line-height: 1.25; }
+        .paths-cta .button { flex-shrink: 0; }
+
+        .quote-band { position: relative; overflow: hidden; padding: 120px 0; color: #fff; background: linear-gradient(90deg, rgba(31, 62, 49, .92), rgba(31, 62, 49, .5)), url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=2000&q=85') center/cover; }
+        .quote-band blockquote { max-width: 750px; margin: 0; font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.2; }
+        .quote-band cite { display: block; margin-top: 25px; color: rgba(255,255,255,.7); font-style: normal; }
+
+        .gallery-section { padding: 100px 0; background: var(--paper); }
+        .gallery-viewer { position: relative; overflow: hidden; aspect-ratio: 16 / 9; max-width: 980px; margin: 0 auto; background: var(--ink); box-shadow: var(--shadow); }
+        .gallery-viewer button { position: absolute; z-index: 1; top: 50%; display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; color: #fff; background: rgba(32,53,47,.62); font-size: 1.35rem; transform: translateY(-50%); transition: background .2s, transform .2s; }
+        .gallery-viewer button:hover { background: var(--moss); transform: translateY(-50%) scale(1.06); }
+        .gallery-viewer .gallery-prev { left: 18px; }
+        .gallery-viewer .gallery-next { right: 18px; }
+        .gallery-slide { width: 100%; height: 100%; margin: 0; }
+        .gallery-slide img { width: 100%; height: 100%; display: block; object-fit: cover; cursor: pointer; }
+        .gallery-caption { position: absolute; right: 0; bottom: 0; left: 0; display: flex; justify-content: space-between; gap: 15px; padding: 42px 24px 18px; color: #fff; background: linear-gradient(transparent, rgba(24,44,35,.8)); pointer-events: none; }
+        .gallery-caption strong { font-family: 'Playfair Display', serif; font-size: 1.25rem; }
+        .gallery-caption span { align-self: end; color: rgba(255,255,255,.75); font-size: .8rem; }
+
+        .about { display: grid; grid-template-columns: .8fr 1.2fr; gap: 80px; align-items: center; padding: 110px 0; }
+        .author-photo { min-height: 470px; background: url('20250915_070503.jpg') center/cover; }
+        .about h2 { margin: 15px 0 22px; }
+        .about p { color: var(--muted); }
+        .signature { margin-top: 26px; font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--moss); }
+        .contact-details { display: grid; gap: 10px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
+        .contact-details a { display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: var(--moss); font-weight: 700; }
+        .contact-details a:hover { color: var(--ink); }
+        .contact-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #dce8da; font-size: .85rem; }
+
+        .live-section { padding: 100px 0 120px; background: #e8eee4; }
+        .live-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; align-items: start; }
+        .live-intro h2 { margin: 16px 0 20px; }
+        .live-intro p { color: var(--muted); }
+        .availability { display: flex; gap: 10px; margin-top: 28px; color: var(--moss); font-weight: 700; font-size: .9rem; }
+        .availability span { width: 10px; height: 10px; margin-top: 7px; border-radius: 50%; background: #79a76f; }
+        .form-card { padding: 34px; background: var(--paper); box-shadow: var(--shadow); }
+        .form-card h3 { font-size: 1.7rem; margin-bottom: 25px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 17px; }
+        .field label { font-size: .8rem; font-weight: 700; color: var(--muted); }
+        .field input, .field select, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 0; padding: 12px 13px; outline: 0; color: var(--ink); background: #fff; }
+        .field textarea { min-height: 100px; resize: vertical; }
+        .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--moss); box-shadow: 0 0 0 3px rgba(68,102,83,.12); }
+        .form-note { margin: 14px 0 0; color: var(--muted); font-size: .78rem; }
+        .success { display: none; margin-top: 18px; padding: 14px; color: #315e3a; background: #e1f0dc; font-size: .9rem; }
+        .success.show { display: block; }
+        footer { padding: 32px 0; background: var(--ink); color: rgba(255,255,255,.68); font-size: .85rem; }
+        .footer-inner { display: flex; justify-content: space-between; gap: 20px; }
+        .footer-brand { color: #fff; font-family: 'Playfair Display', serif; font-size: 1.15rem; }
+
+        @keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 760px) {
+            .container { width: min(100% - 28px, 560px); }
+            .nav { min-height: 66px; }
+            .nav-links { display: none; }
+            .nav-cta { padding: 10px 14px; font-size: .8rem; }
+            .hero { min-height: 700px; }
+            .hero-content { padding-top: 80px; }
+            .paths, .about, .live-grid { grid-template-columns: 1fr; }
+            .paths { gap: 12px; }
+            .path-card { min-height: 190px; }
+            .paths-cta { align-items: flex-start; flex-direction: column; padding: 24px; }
+            .about { gap: 36px; padding: 80px 0; }
+            .author-photo { min-height: 330px; }
+            .quote-band { padding: 80px 0; }
+            .gallery-viewer { aspect-ratio: 4 / 3; }
+            .gallery-viewer button { width: 40px; height: 40px; }
+            .gallery-viewer .gallery-prev { left: 10px; }
+            .gallery-viewer .gallery-next { right: 10px; }
+            .gallery-caption { padding: 36px 15px 12px; }
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+            .theme-bar { align-items: flex-start; flex-direction: column; }
+            .footer-inner { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav container" aria-label="Main navigation">
+            <a class="brand" href="#home"><span class="brand-mark">✦</span> You Matter</a>
+            <div class="nav-links">
+                <a href="#paths">Your journey</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#about">About the author</a>
+            </div>
+            <a class="nav-cta" href="#live">Request a live session <span aria-hidden="true">↗</span></a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="container hero-content">
+                <span class="eyebrow">A gentle place to begin again</span>
+                <h1>Your life is still becoming.</h1>
+                <p>Welcome to a quiet corner for honest reflection, small brave steps, and the reminder that your presence makes a difference.</p>
+                <div class="hero-actions"><a class="button light" href="#paths">Explore the pathways <span aria-hidden="true">↓</span></a><a class="button outline" href="#live" style="color:#fff;border-color:rgba(255,255,255,.5)">Come as you are</a></div>
+            </div>
+        </section>
+
+        <section class="intro container" id="paths">
+            <div class="section-heading">
+                <span class="eyebrow">Ten reminders for the road</span>
+                <h2>There is more light ahead than you can see today.</h2>
+                <p>Take what you need. Read slowly. Save a thought for the days when you need it most.</p>
+            </div>
+            <div class="theme-bar"><label for="theme-select">Choose your reading atmosphere</label><select id="theme-select"><option value="all">All pathways</option><option value="hope">Hope & beginnings</option><option value="strength">Strength & self-trust</option><option value="peace">Peace & presence</option></select></div>
+            <div class="paths">
+                <article class="path-card" data-theme="hope"><div class="path-top"><span>01 / BEGIN</span><span class="path-icon">☼</span></div><div><h3>You can start small.</h3><p>A single kind choice is still a direction. You do not need the whole map to take the next step.</p></div></article>
+                <article class="path-card" data-theme="hope"><div class="path-top"><span>02 / HOPE</span><span class="path-icon">↗</span></div><div><h3>Hope can be quiet.</h3><p>It may look like making tea, answering one message, or choosing to stay open to tomorrow.</p></div></article>
+                <article class="path-card" data-theme="strength"><div class="path-top"><span>03 / COURAGE</span><span class="path-icon">◒</span></div><div><h3>You have survived you.</h3><p>Look gently at the distance you have travelled. The person who kept going is worthy of your respect.</p></div></article>
+                <article class="path-card" data-theme="strength"><div class="path-top"><span>04 / TRUST</span><span class="path-icon">✧</span></div><div><h3>Trust your becoming.</h3><p>You are allowed to change your mind, change your pace, and grow into a life that feels more like yours.</p></div></article>
+                <article class="path-card" data-theme="peace"><div class="path-top"><span>05 / BREATHE</span><span class="path-icon">〰</span></div><div><h3>Return to this moment.</h3><p>The past can teach you, and the future can call you, but this breath is where you meet yourself.</p></div></article>
+                <article class="path-card" data-theme="peace"><div class="path-top"><span>06 / REST</span><span class="path-icon">☾</span></div><div><h3>Rest is not retreat.</h3><p>Nothing about pausing makes you less worthy. Even the earth has seasons of stillness.</p></div></article>
+                <article class="path-card" data-theme="strength"><div class="path-top"><span>07 / BOUNDARIES</span><span class="path-icon">◇</span></div><div><h3>Your no protects your yes.</h3><p>Making room for yourself is not selfish. It is how your energy finds its way back home.</p></div></article>
+                <article class="path-card" data-theme="hope"><div class="path-top"><span>08 / CONNECTION</span><span class="path-icon">♡</span></div><div><h3>You do not have to carry it alone.</h3><p>Being seen begins with one honest sentence. Let someone trustworthy stand beside you.</p></div></article>
+                <article class="path-card" data-theme="peace"><div class="path-top"><span>09 / GRATITUDE</span><span class="path-icon">✿</span></div><div><h3>Notice what is holding you.</h3><p>Warm sunlight, a familiar song, a hand on your shoulder. Small goodness is still goodness.</p></div></article>
+                <article class="path-card" data-theme="hope"><div class="path-top"><span>10 / MATTER</span><span class="path-icon">✦</span></div><div><h3>Your presence is a gift.</h3><p>There are lives touched by your existence in ways you may never fully know. You matter, here and now.</p></div></article>
+            </div>
+            <div class="paths-cta"><p>Learn more about the choices and decisions you make that can ultimately better your life. Request a live session with us.</p><a class="button light" href="#live">Request a live session <span aria-hidden="true">↗</span></a></div>
+        </section>
+
+        <section class="gallery-section" id="gallery">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">A living collection</span>
+                    <h2>Moments worth remembering.</h2>
+                    <p>Every visit brings a fresh arrangement of the photographs you shared. Let a different moment meet you each time.</p>
+                </div>
+                <div class="gallery-viewer" id="gallery-viewer" aria-label="Photo gallery">
+                    <button class="gallery-prev" type="button" aria-label="Show previous image">←</button>
+                    <figure class="gallery-slide"><img id="gallery-image" src="" alt="You Matter gallery image"></figure>
+                    <div class="gallery-caption"><strong id="gallery-caption">A moment to remember</strong><span id="gallery-count">1 / 5</span></div>
+                    <button class="gallery-next" type="button" aria-label="Show next image">→</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="quote-band"><div class="container"><blockquote>“You are not behind. You are a living thing, and living things take the time they take.”</blockquote><cite>— A note from the garden</cite></div></section>
+
+        <section class="about container" id="about">
+            <div class="author-photo" role="img" aria-label="Portrait of the You Matter author"></div>
+            <div><span class="eyebrow">About the author</span><h2>A teacher, mathematician, counselor, coach, mentor, and friend.</h2><p>As a teacher and mathematician, I believe every difficult problem becomes more approachable when it is met with patience, clarity, and the courage to try again. Those same values shape the way I listen, guide, and walk alongside people.</p><p>As a counselor and live coach, I create a thoughtful space for honest conversations, practical next steps, and renewed confidence. As a mentor and friend, I offer encouragement without judgment and remind you that you do not have to navigate every season alone.</p><p>You Matter is my invitation to pause, breathe, and reconnect with the strength already within you. Bring your questions, your hopes, and even your uncertainty. There is room for all of it here.</p><div class="signature">With warmth, Adesanya Adegbemi</div></div>
+        </section>
+
+        <section class="live-section" id="live">
+            <div class="container live-grid">
+                <div class="live-intro"><span class="eyebrow">A little room for your story</span><h2>Request a live session.</h2><p>Sometimes a written reminder is not enough. Share a little about what you need, and we will find a gentle time to meet for a private, encouraging conversation.</p><div class="availability"><span></span><div>Live sessions are currently open<br><small>Usually replied to within 2 days</small></div></div><div class="contact-details" aria-label="Live session contact details"><a href="mailto:adesanya.adegbemi@gmail.com"><span class="contact-icon" aria-hidden="true">@</span>adesanya.adegbemi@gmail.com</a><a href="tel:+2348032788616"><span class="contact-icon" aria-hidden="true">☎</span>+234 803 278 8616</a></div></div>
+                <form class="form-card" id="session-form" action="https://formsubmit.co/ajax/adesanya.adegbemi@gmail.com" method="POST">
+                    <input type="hidden" name="_subject" value="New You Matter live-session request">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    <h3>Let’s find a time</h3>
+                    <div class="form-row"><div class="field"><label for="name">Your name</label><input id="name" name="name" type="text" placeholder="How may we call you?" required></div><div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" placeholder="you@example.com" required></div></div>
+                    <div class="form-row"><div class="field"><label for="format">Preferred format</label><select id="format" name="format"><option>Video call</option><option>Audio call</option><option>Written check-in</option></select></div><div class="field"><label for="time">Best time to connect</label><select id="time" name="time"><option>Morning</option><option>Afternoon</option><option>Evening</option></select></div></div>
+                    <div class="field"><label for="message">What would you like support with?</label><textarea id="message" name="message" placeholder="You can share as much or as little as feels right."></textarea></div>
+                    <button class="button" type="submit">Send my request <span aria-hidden="true">→</span></button><p class="form-note">Your message will be sent privately to adesanya.adegbemi@gmail.com.</p><div class="success" id="success-message" role="status">Thank you for reaching out. Your request has been sent, and a reply will be sent to your email soon.</div>
+                </form>
+            </div>
+        </section>
+    </main>
+    <footer><div class="container footer-inner"><span class="footer-brand">You Matter</span><span>Keep going gently. One breath, one day, one beginning.</span><span>© 2026 You Matter</span></div></footer>
+    <script>
+        const themeSelect = document.querySelector('#theme-select');
+        const pathCards = document.querySelectorAll('.path-card');
+        themeSelect.addEventListener('change', () => {
+            const theme = themeSelect.value;
+            pathCards.forEach(card => { card.hidden = theme !== 'all' && card.dataset.theme !== theme; });
+        });
+
+        const galleryImages = [
+            '20251222_145605.jpg',
+            '20251222_145714.jpg',
+            '20251222_145742.jpg',
+            '20251222_145803.jpg',
+            '20251222_150037.jpg',
+            'New folder/119672183_3713734505304624_782488471232849998_n.jpg',
+            'New folder/20250702_135608.jpg',
+            'New folder/20251015_135524.jpg',
+            'New folder/20260118_105245.jpg',
+            'New folder/482223021_9872894529388560_3268861719223735398_n.jpg',
+            'New folder/482341567_18449894104077189_9206114585399908400_n.jpg',
+            'New folder/510121607_24393964223521683_6430517927207668478_n.jpg',
+            'New folder/513252538_24448696324715139_7081551167270172136_n.jpg',
+            'New folder/513826944_24448696614715110_7284246900594705920_n.jpg',
+            'New folder/514326657_24450154434569328_9089355597791629010_n.jpg',
+            'New folder/514565390_24490792297172208_7124853209198083438_n.jpg',
+            'New folder/515259741_24490792093838895_8370519060890587112_n.jpg',
+            'New folder/51543321_2378409202170501_2474976523522670592_n.jpg',
+            'New folder/515444242_24511059755145462_5880155016665812923_n.jpg',
+            'New folder/515702817_24511059781812126_404205867430389078_n.jpg',
+            'New folder/51584484_2378409395503815_2626304370437783552_n.jpg',
+            'New folder/515947395_24518811681036936_6086755612314635518_n.jpg',
+            'New folder/516191297_24518811564370281_4395396715131234259_n.jpg',
+            'New folder/516351510_24518811747703596_5501336566301859677_n.jpg',
+            'New folder/516608378_24518811581036946_2524091334612039560_n.jpg',
+            'New folder/51668562_2378409058837182_2765396040210186240_n.jpg',
+            'New folder/517018679_24518811697703601_3507012649391739732_n.jpg',
+            'New folder/517123125_24518811751036929_3316152467966325622_n.jpg',
+            'New folder/517181450_24518811621036942_8997928066455699957_n.jpg',
+            'New folder/517346435_24511059735145464_1284955449581485394_n.jpg',
+            'New folder/51899392_2378408788837209_3869394976802603008_n.jpg',
+            'New folder/60796341_2525697760774977_6153966039496392704_n.jpg',
+            'New folder/IMG-20251222-WA0026.jpg',
+            'New folder/IMG_20230214_110033.jpg'
+        ];
+        for (let index = galleryImages.length - 1; index > 0; index -= 1) {
+            const randomIndex = Math.floor(Math.random() * (index + 1));
+            [galleryImages[index], galleryImages[randomIndex]] = [galleryImages[randomIndex], galleryImages[index]];
+        }
+        let galleryIndex = 0;
+        const galleryImage = document.querySelector('#gallery-image');
+        const galleryCaption = document.querySelector('#gallery-caption');
+        const galleryCount = document.querySelector('#gallery-count');
+        const showGalleryImage = index => {
+            galleryIndex = (index + galleryImages.length) % galleryImages.length;
+            galleryImage.src = galleryImages[galleryIndex];
+            galleryImage.alt = `You Matter gallery image ${galleryIndex + 1} of ${galleryImages.length}`;
+            galleryCaption.textContent = `A moment to remember · ${String(galleryIndex + 1).padStart(2, '0')}`;
+            galleryCount.textContent = `${galleryIndex + 1} / ${galleryImages.length}`;
+        };
+        document.querySelector('.gallery-prev').addEventListener('click', () => showGalleryImage(galleryIndex - 1));
+        document.querySelector('.gallery-next').addEventListener('click', () => showGalleryImage(galleryIndex + 1));
+        galleryImage.addEventListener('click', () => showGalleryImage(galleryIndex + 1));
+        showGalleryImage(0);
+
+        document.querySelector('#session-form').addEventListener('submit', async event => {
+            event.preventDefault();
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = 'Sending request <span aria-hidden="true">…</span>';
+            try {
+                const response = await fetch(event.target.action, {
+                    method: 'POST',
+                    body: new FormData(event.target),
+                    headers: { Accept: 'application/json' }
+                });
+                if (!response.ok) throw new Error('Email service unavailable');
+                document.querySelector('#success-message').classList.add('show');
+                event.target.reset();
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Send my request <span aria-hidden="true">→</span>';
+            } catch (error) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Try sending again <span aria-hidden="true">↻</span>';
+                document.querySelector('#success-message').textContent = 'The request could not be sent right now. Please email adesanya.adegbemi@gmail.com directly.';
+                document.querySelector('#success-message').classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
