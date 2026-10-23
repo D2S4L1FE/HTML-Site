@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "Distinct Youngsters School Subject Quiz",
+  "short_name": "Distinct Youngsters",
+  "description": "An installable secondary-school quiz for Science, Commercial, and Arts subjects.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "theme_color": "#071426",
+  "background_color": "#071426",
+  "categories": ["education", "games"],
+  "icons": [
+    {
+      "src": "icons/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

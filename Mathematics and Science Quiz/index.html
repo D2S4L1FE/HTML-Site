@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#071426">
+  <meta name="description" content="Choose a Science, Commercial, or Arts subject for an age- and class-adapted quiz.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>Distinct Youngsters — School Subject Quiz</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/app-icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/app-icon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="Distinct Youngsters home">
+        <span class="brand-mark" aria-hidden="true">DY</span>
+        <span>Distinct Youngsters<span class="brand-dot">.</span></span>
+      </a>
+      <span class="top-note"><span class="status-dot" aria-hidden="true"></span> A little learning goes a long way</span>
+      <button class="install-button" id="install-button" type="button" aria-label="Install Distinct Youngsters app">
+        <span aria-hidden="true">↓</span> Install app
+      </button>
+    </header>
+    <p class="install-status" id="install-status" role="status" aria-live="polite" hidden></p>
+
+    <section class="quiz-card" aria-labelledby="page-title">
+      <div class="decor decor-one" aria-hidden="true">✳</div>
+      <div class="decor decor-two" aria-hidden="true">＋</div>
+      <div class="card-content">
+        <div class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">✦</span> YOUR DAILY BRAIN BOOST</div>
+        <h1 id="page-title">Curiosity looks<br><span>good on you.</span></h1>
+        <p class="intro">Choose your department and a school subject. Your quiz is matched to your class and age, with instant feedback to help you learn.</p>
+
+        <form class="setup-panel" id="setup-panel">
+          <div class="form-field">
+            <label class="field-label" for="candidate-name">YOUR NAME</label>
+            <input class="text-input" id="candidate-name" name="candidateName" type="text" autocomplete="name" maxlength="60" required>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label" for="candidate-age">YOUR AGE</label>
+              <input class="text-input" id="candidate-age" name="candidateAge" type="number" inputmode="numeric" min="5" max="100" required>
+            </div>
+            <div class="form-field">
+              <label class="field-label" for="candidate-class">YOUR CLASS</label>
+              <input class="text-input" id="candidate-class" name="candidateClass" type="text" autocomplete="off" maxlength="40" placeholder="e.g. Grade 6 or JSS 1" required>
+            </div>
+          </div>
+          <p class="difficulty-note" id="difficulty-note" aria-live="polite">Quiz difficulty will be matched to the candidate's age and class.</p>
+          <div class="form-field">
+            <label class="field-label" for="department-select">CHOOSE YOUR DEPARTMENT</label>
+            <div class="select-wrap">
+              <span class="select-icon" aria-hidden="true">◈</span>
+              <select id="department-select" name="department" required>
+                <option value="" selected disabled>Select a department</option>
+                <option value="science">Science</option>
+                <option value="commercial">Commercial</option>
+                <option value="arts">Arts</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">⌄</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="field-label" for="subject-select">SUBJECT YOU'D LIKE TO BE TESTED ON</label>
+            <div class="select-wrap">
+              <span class="select-icon" aria-hidden="true">◉</span>
+              <select id="subject-select" name="subject" required disabled>
+                <option value="" selected disabled>Select a department first</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">⌄</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="field-label" for="question-count-select">NUMBER OF QUESTIONS</label>
+            <div class="select-wrap">
+              <span class="select-icon" aria-hidden="true">#</span>
+              <select id="question-count-select" name="questionCount" required disabled>
+                <option value="" selected disabled>Select a subject first</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">⌄</span>
+            </div>
+            <p class="difficulty-note" id="question-bank-note" hidden></p>
+          </div>
+          <div class="form-field">
+            <label class="field-label" for="time-limit-select">TIME LIMIT</label>
+            <div class="select-wrap">
+              <span class="select-icon" aria-hidden="true">◷</span>
+              <select id="time-limit-select" name="timeLimit" required>
+                <option value="30" selected>30 minutes</option>
+                <option value="60">60 minutes</option>
+                <option value="90">90 minutes</option>
+                <option value="120">120 minutes</option>
+                <option value="150">150 minutes</option>
+              </select>
+              <span class="select-chevron" aria-hidden="true">⌄</span>
+            </div>
+          </div>
+          <button class="button button-primary" id="start-button" type="submit">Let's play <span aria-hidden="true">→</span></button>
+          <p class="setup-caption"><span id="setup-question-summary">Choose a subject</span> <span aria-hidden="true">·</span> <span id="setup-time-summary">30 minutes</span> <span aria-hidden="true">·</span> Just for fun</p>
+        </form>
+
+        <div class="quiz-panel" id="quiz-panel" hidden>
+          <p class="candidate-summary" id="candidate-summary"></p>
+          <div class="quiz-meta">
+            <span class="question-count" id="question-count">QUESTION 1 OF 20</span>
+            <div class="quiz-stats">
+              <span class="difficulty-pill" id="quiz-difficulty">STANDARD</span>
+              <span class="timer-pill" id="quiz-timer" role="timer" aria-label="Time remaining" aria-live="off">30:00</span>
+              <span class="score-pill"><span aria-hidden="true">✦</span> <span id="score-display">0</span> pts</span>
+            </div>
+          </div>
+          <div class="progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0" id="progress-track">
+            <span class="progress-fill" id="progress-fill"></span>
+          </div>
+          <p class="question-category" id="question-category">MATHEMATICS</p>
+          <h2 class="question-text" id="question-text" tabindex="-1"></h2>
+          <div class="answers" id="answers" role="group" aria-label="Answer choices"></div>
+          <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+          <button class="button button-primary next-button" id="next-button" type="button" disabled>Check answer <span aria-hidden="true">→</span></button>
+        </div>
+
+        <div class="result-panel" id="result-panel" hidden aria-live="polite">
+          <div class="result-badge" id="result-badge" aria-hidden="true">✦</div>
+          <p class="question-category">YOUR RESULTS</p>
+          <p class="result-candidate" id="result-candidate"></p>
+          <h2 class="result-title" id="result-title">Nicely done!</h2>
+          <p class="result-percentage" id="result-percentage"></p>
+          <p class="result-score" id="result-score"></p>
+          <p class="result-message" id="result-message"></p>
+          <button class="button button-primary" id="restart-button" type="button">Play again <span aria-hidden="true">↻</span></button>
+        </div>
+      </div>
+      <footer class="card-footer"><span>STAY CURIOUS</span><span class="footer-spark" aria-hidden="true">✳</span><span>YOU'RE DOING GREAT</span></footer>
+    </section>
+    <p class="page-footer">Made for curious minds <span aria-hidden="true">♡</span></p>
+  </main>
+</body>
+</html>
