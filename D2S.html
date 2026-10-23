@@ -45,7 +45,6 @@
         .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; color: #fff; border-radius: 50%; background: var(--moss); font-size: 1rem; }
         .nav-links { display: flex; align-items: center; gap: 26px; font-size: .87rem; color: var(--muted); }
         .nav-links a:hover { color: var(--ink); }
-        .nav-academics { font-weight: 700; }
         .nav-cta, .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 100px; padding: 12px 20px; background: var(--moss); color: #fff; font-weight: 700; transition: transform .2s, background .2s; }
         .nav-cta:hover, .button:hover { transform: translateY(-2px); background: #2f4d3b; }
         .button.light { background: #fff; color: var(--ink); }
@@ -78,6 +77,30 @@
         .path-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
         .path-card { cursor: pointer; }
         .path-card:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+        .path-card[data-theme="hope"] {
+            background: linear-gradient(135deg, #f9e7b7 0%, #f9dccc 55%, #f3c9c1 100%);
+            border-color: rgba(143, 94, 59, .18);
+        }
+        .path-card[data-theme="strength"] {
+            background: linear-gradient(135deg, #dfeee7 0%, #cfe6d9 45%, #bfd7db 100%);
+            border-color: rgba(40, 93, 83, .18);
+        }
+        .path-card[data-theme="peace"] {
+            background: linear-gradient(135deg, #e2e8ff 0%, #d7e7f8 45%, #d0ebf1 100%);
+            border-color: rgba(56, 75, 117, .18);
+        }
+        .path-card[data-theme="hope"] .path-top,
+        .path-card[data-theme="hope"] .path-icon,
+        .path-card[data-theme="hope"] h3,
+        .path-card[data-theme="hope"] p { color: #3d2d28; }
+        .path-card[data-theme="strength"] .path-top,
+        .path-card[data-theme="strength"] .path-icon,
+        .path-card[data-theme="strength"] h3,
+        .path-card[data-theme="strength"] p { color: #1d3f3b; }
+        .path-card[data-theme="peace"] .path-top,
+        .path-card[data-theme="peace"] .path-icon,
+        .path-card[data-theme="peace"] h3,
+        .path-card[data-theme="peace"] p { color: #21375a; }
         .path-top { display: flex; justify-content: space-between; color: var(--moss); font-size: .8rem; font-weight: 700; }
         .path-card h3 { margin: 30px 0 10px; font-size: 1.65rem; }
         .path-card p { margin: 0; color: var(--muted); font-size: .95rem; }
@@ -196,9 +219,8 @@
         @media (max-width: 760px) {
             .container { width: min(100% - 28px, 560px); }
             .nav { min-height: 66px; }
-            .nav-links { display: flex; margin-left: auto; }
-            .nav-links a:not(.nav-academics), .nav-cta { display: none; }
-            .nav-academics { padding: 9px 14px; border-radius: 100px; color: #fff; background: var(--moss); }
+            .nav-links { display: none; }
+            .nav-cta { padding: 10px 14px; font-size: .8rem; }
             .hero { min-height: 700px; }
             .hero-content { padding-top: 80px; }
             .paths, .about, .live-grid { grid-template-columns: 1fr; }
@@ -237,7 +259,6 @@
                 <a href="#paths">Your journey</a>
                 <a href="#gallery">Gallery</a>
                 <a href="#about">About the author</a>
-                <a class="nav-academics" href="Mathematics%20and%20Science%20Quiz/index.html">Academics</a>
             </div>
             <a class="nav-cta" href="#live">Request a live session <span aria-hidden="true">↗</span></a>
         </nav>
@@ -297,7 +318,7 @@
                 </div>
                 <div class="gallery-viewer" id="gallery-viewer" tabindex="-1" aria-label="Photo gallery">
                     <button class="gallery-prev" type="button" aria-label="Show previous image">←</button>
-                    <figure class="gallery-slide"><img id="gallery-image" src="" alt="You Matter gallery image"></figure>
+                    <figure class="gallery-slide"><img id="gallery-image" src="" alt="You Matter gallery image" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Open photo gallery"></figure>
                     <div class="gallery-caption"><strong id="gallery-caption">A moment to remember</strong><span id="gallery-count">1 / 5</span></div>
                     <button class="gallery-next" type="button" aria-label="Show next image">→</button>
                 </div>
@@ -334,7 +355,7 @@
 
         <section class="about container" id="about">
             <div class="author-photo" role="img" aria-label="Portrait of the You Matter author"></div>
-            <div><span class="eyebrow">About the author</span><h2>A teacher, mathematician, counselor, coach, mentor, and friend.</h2><p>As a teacher and mathematician, I believe every difficult problem becomes more approachable when it is met with patience, clarity, and the courage to try again. Those same values shape the way I listen, guide, and walk alongside people.</p><p>As a counselor and live coach, I create a thoughtful space for honest conversations, practical next steps, and renewed confidence. As a mentor and friend, I offer encouragement without judgment and remind you that you do not have to navigate every season alone.</p><p>You Matter is my invitation to pause, breathe, and reconnect with the strength already within you. Bring your questions, your hopes, and even your uncertainty. There is room for all of it here.</p><div class="signature">With warmth, Adesanya Adegbemi</div></div>
+            <div><span class="eyebrow">About the author</span><h2>A teacher, mathematician, counselor, coach, mentor, and friend.</h2><p>As a teacher and mathematician, I believe every difficult problem becomes more approachable when it is met with patience, clarity, and the courage to try again. Those same values shape the way I listen, guide, and walk alongside people.</p><p>As a counselor and live coach, I create a thoughtful space for honest conversations, practical next steps, and renewed confidence. As a mentor and friend, I offer encouragement without judgment and remind you that you do not have to navigate every season alone.</p><p>You Matter is my invitation to pause, breathe, and reconnect with the strength already within you. Bring your questions, your hopes, and even your uncertainty. There is room for all of it here.</p><div class="signature">With warmth, Adesanya Adegbemi Samson</div></div>
         </section>
 
         <section class="live-section" id="live">
@@ -533,6 +554,8 @@
         const galleryWindow = document.querySelector('#gallery-window');
         const galleryWindowImage = document.querySelector('#gallery-window-image');
         const galleryWindowCaption = document.querySelector('#gallery-window-caption');
+        const galleryWindowClose = document.querySelector('#gallery-window-close');
+        let galleryReturnFocus = galleryViewer;
         const showGalleryImage = index => {
             galleryIndex = (index + galleryImages.length) % galleryImages.length;
             galleryImage.src = galleryImages[galleryIndex];
@@ -542,26 +565,38 @@
         };
         document.querySelector('.gallery-prev').addEventListener('click', () => showGalleryImage(galleryIndex - 1));
         document.querySelector('.gallery-next').addEventListener('click', () => showGalleryImage(galleryIndex + 1));
-        const showGalleryWindow = () => {
+        const showGalleryWindow = trigger => {
+            galleryReturnFocus = trigger instanceof HTMLElement && trigger !== document.body
+                ? trigger
+                : galleryViewer;
             galleryWindowImage.src = galleryImage.src;
             galleryWindowImage.alt = galleryImage.alt;
             galleryWindowCaption.textContent = galleryCaption.textContent;
             galleryWindow.classList.add('open');
             galleryWindow.setAttribute('aria-hidden', 'false');
             document.body.classList.add('gallery-open');
+            galleryWindowClose.focus();
         };
         const closeGalleryWindow = () => {
-            galleryViewer.focus();
             galleryWindow.classList.remove('open');
             galleryWindow.setAttribute('aria-hidden', 'true');
             document.body.classList.remove('gallery-open');
+            (galleryReturnFocus.isConnected ? galleryReturnFocus : galleryViewer).focus();
         };
         const showWindowImage = index => {
             showGalleryImage(index);
-            showGalleryWindow();
+            galleryWindowImage.src = galleryImage.src;
+            galleryWindowImage.alt = galleryImage.alt;
+            galleryWindowCaption.textContent = galleryCaption.textContent;
         };
         galleryViewer.addEventListener('click', event => {
-            if (!event.target.closest('button')) showGalleryWindow();
+            if (!event.target.closest('button')) showGalleryWindow(event.target);
+        });
+        galleryImage.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showGalleryWindow(galleryImage);
+            }
         });
         document.querySelector('#gallery-window-prev').addEventListener('click', () => showWindowImage(galleryIndex - 1));
         document.querySelector('#gallery-window-next').addEventListener('click', () => showWindowImage(galleryIndex + 1));
@@ -570,7 +605,41 @@
             if (event.target === galleryWindow) closeGalleryWindow();
         });
         document.addEventListener('keydown', event => {
-            if (event.key === 'Escape' && galleryWindow.classList.contains('open')) closeGalleryWindow();
+            if (!galleryWindow.classList.contains('open')) return;
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                closeGalleryWindow();
+                return;
+            }
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                showWindowImage(galleryIndex - 1);
+                return;
+            }
+            if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                showWindowImage(galleryIndex + 1);
+                return;
+            }
+            if (event.key === 'Tab') {
+                const focusable = Array.from(galleryWindow.querySelectorAll(
+                    'button:not([disabled]), [href], input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+                )).filter(element => element.getClientRects().length > 0);
+                if (!focusable.length) {
+                    event.preventDefault();
+                    galleryWindowClose.focus();
+                    return;
+                }
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (event.shiftKey && (document.activeElement === first || !galleryWindow.contains(document.activeElement))) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && (document.activeElement === last || !galleryWindow.contains(document.activeElement))) {
+                    event.preventDefault();
+                    first.focus();
+                }
+            }
         });
         showGalleryImage(0);
 
