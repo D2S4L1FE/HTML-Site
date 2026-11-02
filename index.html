@@ -35,7 +35,6 @@
         button, input, select, textarea { font: inherit; }
         button { cursor: pointer; }
         .container { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
-
         .site-header {
             position: fixed; z-index: 10; top: 0; width: 100%;
             background: rgba(255, 253, 248, .84); border-bottom: 1px solid var(--line);
@@ -73,7 +72,8 @@
         .theme-bar label { color: var(--muted); font-size: .9rem; }
         select { border: 1px solid var(--line); border-radius: 100px; padding: 10px 36px 10px 15px; color: var(--ink); background: var(--paper); }
         .paths { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .path-card { min-height: 235px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; padding: 26px; border: 1px solid var(--line); background: var(--paper); transition: transform .25s, box-shadow .25s; }
+        .path-card { min-height: 235px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; padding: 26px; border: 1px solid var(--line); background: var(--paper); cursor: pointer; transition: transform .25s, box-shadow .25s; }
+        .path-card::after { content: 'Read the four-page story →'; align-self: flex-start; margin-top: 16px; color: var(--moss); font-size: .78rem; font-weight: 700; }
         .path-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 92px; background-position: center; background-size: cover; opacity: .9; }
         .path-card[data-theme="hope"]::before { background-image: linear-gradient(90deg, rgba(32,53,47,.38), rgba(32,53,47,.04)), url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=80'); }
         .path-card[data-theme="strength"]::before { background-image: linear-gradient(90deg, rgba(32,53,47,.42), rgba(32,53,47,.05)), url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=80'); }
@@ -90,6 +90,22 @@
         .paths-cta .button { flex-shrink: 0; }
         .values { display: flex; flex-wrap: wrap; gap: 8px; max-width: 720px; margin-top: 18px; }
         .values span { padding: 6px 11px; border: 1px solid rgba(255,255,255,.35); border-radius: 100px; color: rgba(255,255,255,.9); font-size: .75rem; font-weight: 700; }
+
+        body.story-open { overflow: hidden; }
+        .story-window { position: fixed; z-index: 40; inset: 0; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(15,35,30,.82); backdrop-filter: blur(10px); }
+        .story-window.open { display: flex; }
+        .story-card { position: relative; width: min(780px, 100%); max-height: min(760px, 92vh); overflow: auto; padding: 58px clamp(26px, 6vw, 72px) 32px; background: var(--paper); box-shadow: 0 30px 90px rgba(0,0,0,.3); }
+        .story-close { position: absolute; top: 16px; right: 16px; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); background: transparent; font-size: 1.3rem; }
+        .story-close:hover { color: #fff; background: var(--moss); }
+        .story-theme { color: var(--moss); letter-spacing: .13em; text-transform: uppercase; font-size: .72rem; font-weight: 700; }
+        .story-card h2 { max-width: 600px; margin: 14px 0 20px; font-size: clamp(2.2rem, 5vw, 4rem); }
+        .story-page { min-height: 220px; color: var(--muted); font-size: 1.08rem; }
+        .story-footer { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-top: 24px; border-top: 1px solid var(--line); }
+        .story-progress { color: var(--muted); font-size: .82rem; font-weight: 700; }
+        .story-actions { display: flex; gap: 10px; }
+        .story-actions button { border: 1px solid var(--line); border-radius: 100px; padding: 10px 16px; color: var(--ink); background: transparent; font-weight: 700; }
+        .story-actions button:hover:not(:disabled) { color: #fff; background: var(--moss); }
+        .story-actions button:disabled { cursor: not-allowed; opacity: .4; }
 
         .support-section { position: relative; overflow: hidden; padding: 105px 0; color: #fff; background: linear-gradient(100deg, rgba(31, 62, 49, .96), rgba(68, 102, 83, .72)), url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=2200&q=85') center/cover; }
         .support-section::after { content: '✦'; position: absolute; right: 8%; bottom: -50px; color: rgba(255,255,255,.1); font-family: 'Fraunces', serif; font-size: 18rem; line-height: 1; }
@@ -190,6 +206,10 @@
             .gallery-caption { padding: 36px 15px 12px; }
             .video-gallery-heading { align-items: flex-start; flex-direction: column; }
             .video-grid { grid-template-columns: 1fr; }
+            .story-window { padding: 14px; }
+            .story-card { padding: 54px 22px 24px; }
+            .story-page { min-height: 260px; font-size: 1rem; }
+            .story-footer { align-items: flex-start; flex-direction: column; }
             .form-row { grid-template-columns: 1fr; gap: 0; }
             .theme-bar { align-items: flex-start; flex-direction: column; }
             .footer-inner { flex-direction: column; }
@@ -225,7 +245,7 @@
             <div class="section-heading">
                 <span class="eyebrow">Ten reminders for the road</span>
                 <h2>There is more light ahead than you can see today.</h2>
-                <p>Take what you need. Read slowly. Save a thought for the days when you need it most.</p>
+                <p>Take what you need. Select any pathway to read its four-page story, free for every visitor.</p>
             </div>
             <div class="theme-bar"><label for="theme-select">Choose your reading atmosphere</label><select id="theme-select"><option value="all">All pathways</option><option value="hope">Hope & beginnings</option><option value="strength">Strength & self-trust</option><option value="peace">Peace & presence</option></select></div>
             <div class="paths">
@@ -242,6 +262,19 @@
             </div>
             <div class="paths-cta"><div><p>Want to know more about the decisions, choices, and values that can help shape your life for the better?</p><div class="values" aria-label="Values and choices for a better life"><span>Choose clarity</span><span>Practice courage</span><span>Lead with compassion</span><span>Protect your boundaries</span><span>Build consistency</span><span>Stay curious</span><span>Value connection</span><span>Notice gratitude</span></div></div><a class="button light" href="#live">Request a live session <span aria-hidden="true">↗</span></a></div>
         </section>
+
+        <div class="story-window" id="story-window" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="story-title">
+            <article class="story-card">
+                <button class="story-close" id="story-close" type="button" aria-label="Close story">×</button>
+                <div class="story-theme" id="story-theme"></div>
+                <h2 id="story-title"></h2>
+                <div class="story-page" id="story-page"></div>
+                <div class="story-footer">
+                    <span class="story-progress" id="story-progress" aria-live="polite"></span>
+                    <div class="story-actions"><button id="story-prev" type="button">← Previous</button><button id="story-next" type="button">Next →</button></div>
+                </div>
+            </article>
+        </div>
 
         <section class="gallery-section" id="gallery">
             <div class="container">
@@ -294,12 +327,75 @@
         </section>
     </main>
     <footer><div class="container footer-inner"><span class="footer-brand">You Matter</span><span>Keep going gently. One breath, one day, one beginning.</span><span>© 2026 You Matter</span></div></footer>
+    <script src="pathway-stories.js"></script>
     <script>
         const themeSelect = document.querySelector('#theme-select');
         const pathCards = document.querySelectorAll('.path-card');
         themeSelect.addEventListener('change', () => {
             const theme = themeSelect.value;
             pathCards.forEach(card => { card.hidden = theme !== 'all' && card.dataset.theme !== theme; });
+        });
+
+        const pathwayStories = window.youMatterPathwayStories;
+        const storyWindow = document.querySelector('#story-window');
+        const storyTitle = document.querySelector('#story-title');
+        const storyTheme = document.querySelector('#story-theme');
+        const storyPage = document.querySelector('#story-page');
+        const storyProgress = document.querySelector('#story-progress');
+        const storyPrevious = document.querySelector('#story-prev');
+        const storyNext = document.querySelector('#story-next');
+        const storyClose = document.querySelector('#story-close');
+        let activeStory = null;
+        let storyPageIndex = 0;
+        let lastStoryTrigger = null;
+
+        const renderStoryPage = () => {
+            storyTitle.textContent = activeStory.title;
+            storyTheme.textContent = `${activeStory.theme} pathway`;
+            storyPage.textContent = activeStory.pages[storyPageIndex];
+            storyProgress.textContent = `Page ${storyPageIndex + 1} of ${activeStory.pages.length}`;
+            storyPrevious.disabled = storyPageIndex === 0;
+            storyNext.disabled = storyPageIndex === activeStory.pages.length - 1;
+        };
+        const openStory = (story, trigger) => {
+            activeStory = story;
+            storyPageIndex = 0;
+            lastStoryTrigger = trigger;
+            renderStoryPage();
+            storyWindow.classList.add('open');
+            storyWindow.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('story-open');
+            storyClose.focus();
+        };
+        const closeStory = () => {
+            storyWindow.classList.remove('open');
+            storyWindow.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('story-open');
+            if (lastStoryTrigger?.isConnected) lastStoryTrigger.focus();
+        };
+        pathCards.forEach((card, index) => {
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-haspopup', 'dialog');
+            card.setAttribute('aria-label', `Read pathway story: ${pathwayStories[index].title}`);
+            const activate = () => openStory(pathwayStories[index], card);
+            card.addEventListener('click', activate);
+            card.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    activate();
+                }
+            });
+        });
+        storyPrevious.addEventListener('click', () => { if (storyPageIndex > 0) { storyPageIndex -= 1; renderStoryPage(); } });
+        storyNext.addEventListener('click', () => { if (storyPageIndex < activeStory.pages.length - 1) { storyPageIndex += 1; renderStoryPage(); } });
+        storyClose.addEventListener('click', closeStory);
+        storyWindow.addEventListener('click', event => { if (event.target === storyWindow) closeStory(); });
+        document.addEventListener('keydown', event => {
+            if (!storyWindow.classList.contains('open')) return;
+            if (event.key === 'Escape') closeStory();
+            if (event.key === 'ArrowLeft' && storyPageIndex > 0) { storyPageIndex -= 1; renderStoryPage(); }
+            if (event.key === 'ArrowRight' && storyPageIndex < activeStory.pages.length - 1) { storyPageIndex += 1; renderStoryPage(); }
         });
 
         const galleryImages = [

@@ -52,6 +52,10 @@
               <input class="text-input" id="candidate-class" name="candidateClass" type="text" autocomplete="off" maxlength="40" placeholder="e.g. Grade 6 or JSS 1" required>
             </div>
           </div>
+          <div class="form-field">
+            <label class="field-label" for="candidate-email">YOUR EMAIL</label>
+            <input class="text-input" id="candidate-email" name="candidateEmail" type="email" autocomplete="email" maxlength="120" placeholder="you@example.com" required>
+          </div>
           <p class="difficulty-note" id="difficulty-note" aria-live="polite">Quiz difficulty will be matched to the candidate's age and class.</p>
           <div class="form-field">
             <label class="field-label" for="department-select">CHOOSE YOUR DEPARTMENT</label>
@@ -138,6 +142,54 @@
       </div>
       <footer class="card-footer"><span>STAY CURIOUS</span><span class="footer-spark" aria-hidden="true">✳</span><span>YOU'RE DOING GREAT</span></footer>
     </section>
+    <div class="access-modal" id="access-modal" hidden>
+      <div class="access-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="access-modal-title">
+        <button class="close-access" id="close-access" type="button" aria-label="Close access message">×</button>
+        <p class="eyebrow access-eyebrow"><span class="eyebrow-icon" aria-hidden="true">✦</span> FULL ACCESS</p>
+        <h2 id="access-modal-title">Your 20-question trial is complete.</h2>
+        <p class="access-copy">Complete this request form for review. Send payment proof to <a href="mailto:adesanya.adegbemi@gmail.com">adesanya.adegbemi@gmail.com</a>; full access is granted after payment is confirmed and your request is approved.</p>
+        <form class="access-request-form form-card" id="access-request-form" action="https://formsubmit.co/ajax/adesanya.adegbemi@gmail.com" method="POST">
+          <input type="hidden" name="_subject" value="Quiz full-access subscription request">
+          <input type="hidden" name="_replyto" value="">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="quiz_subject" id="access-quiz-subject">
+          <input type="hidden" name="quiz_department" id="access-quiz-department">
+          <input type="hidden" name="payment_account" value="Access Bank account 0065408200">
+          <div class="form-field">
+            <label class="field-label" for="access-name">YOUR NAME</label>
+            <input class="text-input" id="access-name" name="name" type="text" autocomplete="name" maxlength="100" required>
+          </div>
+          <div class="form-field">
+            <label class="field-label" for="access-email">YOUR EMAIL</label>
+            <input class="text-input" id="access-email" name="email" type="email" autocomplete="email" maxlength="120" required>
+          </div>
+          <div class="form-field">
+            <label class="field-label" for="access-country">COUNTRY</label>
+            <input class="text-input" id="access-country" name="country" type="text" autocomplete="country-name" maxlength="80" required>
+          </div>
+          <fieldset class="access-choice-group">
+            <legend>ACCOUNT TYPE</legend>
+            <label><input type="radio" name="account_type" value="Individual" required> Individual</label>
+            <label><input type="radio" name="account_type" value="School"> School</label>
+            <label><input type="radio" name="account_type" value="Organization"> Organization</label>
+          </fieldset>
+          <div class="form-field" id="organization-name-field" hidden>
+            <label class="field-label" for="organization-name">SCHOOL / ORGANIZATION NAME</label>
+            <input class="text-input" id="organization-name" name="organization_name" type="text" maxlength="120">
+          </div>
+          <fieldset class="access-choice-group">
+            <legend>SUBSCRIPTION PLAN</legend>
+            <label><input type="radio" name="plan" value="Weekly — $1" required> Weekly — $1</label>
+            <label><input type="radio" name="plan" value="Monthly — $5"> Monthly — $5</label>
+          </fieldset>
+          <p class="payment-instructions"><strong>Payment details:</strong> Access Bank · Account number: <strong>0065408200</strong>. Choose your plan above, then send proof of payment to <a href="mailto:adesanya.adegbemi@gmail.com">adesanya.adegbemi@gmail.com</a>.</p>
+          <button class="button button-primary modal-button" id="submit-access-request" type="submit">Submit details &amp; request access <span aria-hidden="true">→</span></button>
+          <a class="button access-email-fallback" id="access-email-fallback" href="#" hidden>Open email app to send request</a>
+          <p class="access-form-status" id="access-form-status" role="status" aria-live="polite" hidden></p>
+        </form>
+      </div>
+    </div>
     <p class="page-footer">Made for curious minds <span aria-hidden="true">♡</span></p>
   </main>
 </body>
