@@ -1,0 +1,69 @@
+{
+  "providers": [
+    {
+      "id": "alikh0-replace-with-real-provider-id",
+      "displayName": "Alikho API — configure after identifying official API documentation",
+      "kind": "json-api",
+      "endpoint": "https://REPLACE-WITH-OFFICIAL-DOCUMENTED-ENDPOINT",
+      "method": "GET",
+      "authEnv": "ALIKHO_API_KEY",
+      "contentLicense": "REPLACE-WITH-VERIFIED-LICENSE-ID",
+      "sourceTitle": "REPLACE-WITH-API-DATASET-TITLE",
+      "sourceUrl": "REPLACE-WITH-OFFICIAL-DOCS-OR-DATASET-URL",
+      "attribution": "REPLACE-WITH-REQUIRED-ATTRIBUTION",
+      "responsePath": "questions",
+      "fields": {
+        "question": "question",
+        "answers": "answers",
+        "correct": "correctIndex",
+        "fact": "explanation",
+        "subject": "subject",
+        "examStandard": "examStandard"
+      }
+    },
+    {
+      "id": "educational-api-replace-with-real-provider-id",
+      "displayName": "Educational API — configure after identifying the official service",
+      "kind": "json-api",
+      "endpoint": "https://REPLACE-WITH-OFFICIAL-DOCUMENTED-ENDPOINT",
+      "method": "GET",
+      "authEnv": "EDUCATIONAL_API_KEY",
+      "contentLicense": "REPLACE-WITH-VERIFIED-LICENSE-ID",
+      "sourceTitle": "REPLACE-WITH-API-DATASET-TITLE",
+      "sourceUrl": "REPLACE-WITH-OFFICIAL-DOCS-OR-DATASET-URL",
+      "attribution": "REPLACE-WITH-REQUIRED-ATTRIBUTION",
+      "responsePath": "questions",
+      "fields": {
+        "question": "question",
+        "answers": "answers",
+        "correct": "correctIndex",
+        "fact": "explanation",
+        "subject": "subject",
+        "examStandard": "examStandard"
+      }
+    }
+  ],
+  "examBoards": [
+    {
+      "id": "aqa",
+      "displayName": "AQA",
+      "kind": "reference-links-only",
+      "officialUrl": "https://www.aqa.org.uk/past-papers-and-mark-schemes-finder",
+      "questionTextReuse": false
+    },
+    {
+      "id": "edexcel",
+      "displayName": "Pearson Edexcel",
+      "kind": "reference-links-only",
+      "officialUrl": "https://qualifications.pearson.com/en/support/support-topics/exams/past-papers.html",
+      "questionTextReuse": false
+    },
+    {
+      "id": "ocr",
+      "displayName": "OCR",
+      "kind": "reference-links-only",
+      "officialUrl": "https://www.ocr.org.uk/qualifications/past-paper-finder/",
+      "questionTextReuse": false
+    }
+  ]
+}

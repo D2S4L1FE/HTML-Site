@@ -1,8 +1,9 @@
-const CACHE_NAME = 'distinct-youngsters-v18';
+const CACHE_NAME = 'distinct-youngsters-v21';
 const APP_FILES = [
   './',
   './index.html',
   './styles.css',
+  './exam-extractor/question-bank.generated.js',
   './script.js',
   './manifest.webmanifest',
   './icons/app-icon.svg',

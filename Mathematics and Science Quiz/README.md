@@ -22,7 +22,7 @@ After the first online visit, the quiz shell and questions are cached for offlin
 - Required candidate name, age, class, subject, and question-count details
 - Target exam selector for WAEC, NECO, JAMB/UTME, or GCSE; selected track is displayed in the quiz and saved locally with the participant profile
 - Every subject offers 20, 30, 40, or 50 questions
-- Mathematics and Integrated Science have 60 unique questions; other subject banks have 20 unique questions and repeat questions for longer rounds
+- Generated exam-specific Mathematics banks currently contain 150 original practice questions per WAEC, NECO, JAMB/UTME, and GCSE-style track; other subjects use built-in sample questions unless a rights-cleared subject bank is imported
 - Dark high-contrast interface with navy, electric blue, and yellow accents
 - Adjustable 30, 60, 90, 120, or 150-minute countdown
 - Installable Progressive Web App (PWA) with offline quiz access after first visit
@@ -37,6 +37,10 @@ After the first online visit, the quiz shell and questions are cached for offlin
 - No external libraries or runtime dependencies
 
 **Exam-standard content status:** The selector labels the requested examination track, but the current in-app subject banks are small, general sample sets and have not yet been individually validated or rewritten to WAEC, NECO, JAMB/UTME, or GCSE syllabuses. The interface flags this on the subject setup. Do not treat the current samples as a complete exam-preparation bank until subject-specific content is expanded and reviewed against current specifications.
+
+## Exam question sources
+
+The [exam-extractor](exam-extractor/README.md) folder provides a rights-cleared API/import pipeline, provenance and licence validation, and generation of the bank consumed by the quiz. It currently includes 150 original CC0 math practice questions for each WAEC-style, NECO-style, JAMB/UTME-style, and GCSE-style track. These are not copied official papers and are not yet teacher-verified against current syllabuses. It does not crawl AQA, Pearson Edexcel, or OCR past-paper pages: publicly viewable/downloadable papers are not automatically licensed for republication. See [the source review](exam-extractor/source-review.md). Until verified API documentation and content reuse terms are supplied for Alikho and the unnamed educational API, their provider entries remain configuration placeholders. No API credentials should be placed in the browser app.
 
 ## Subscription request and approval limits
 

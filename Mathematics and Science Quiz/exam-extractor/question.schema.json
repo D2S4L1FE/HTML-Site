@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rights-cleared quiz question batch",
+  "type": "object",
+  "required": ["source", "questions"],
+  "properties": {
+    "source": {
+      "type": "object",
+      "required": ["title", "url", "license"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "format": "uri" },
+        "license": { "type": "string", "enum": ["CC0-1.0", "CC-BY-4.0", "CC-BY-SA-4.0", "public-domain", "permission-granted"] },
+        "attribution": { "type": "string" },
+        "retrievedAt": { "type": "string", "format": "date-time" },
+        "permissionReference": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["examStandard", "subject", "question", "answers", "correct", "fact"],
+        "properties": {
+          "examStandard": { "enum": ["waec", "neco", "jamb", "gcse"] },
+          "subject": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$" },
+          "category": { "type": "string" },
+          "question": { "type": "string", "minLength": 8 },
+          "answers": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "string", "minLength": 1 } },
+          "correct": { "type": "integer", "minimum": 0, "maximum": 3 },
+          "answerValue": { "type": ["string", "number"] },
+          "fact": { "type": "string", "minLength": 1 },
+          "topic": { "type": "string" },
+          "year": { "type": "integer", "minimum": 1900, "maximum": 2100 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

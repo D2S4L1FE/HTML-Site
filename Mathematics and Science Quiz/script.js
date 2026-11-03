@@ -210,6 +210,7 @@ const scoreDisplay = document.querySelector('#score-display');
 const progressTrack = document.querySelector('#progress-track');
 const progressFill = document.querySelector('#progress-fill');
 const questionCategory = document.querySelector('#question-category');
+const questionSource = document.querySelector('#question-source');
 const questionText = document.querySelector('#question-text');
 const answersElement = document.querySelector('#answers');
 const feedback = document.querySelector('#feedback');
@@ -268,6 +269,9 @@ function getDifficulty(age, className) {
 }
 
 function getQuestionPoolForDifficulty(subject, difficultyLevel) {
+  const examBank = window.DY_EXAM_QUESTION_BANK || {};
+  const examPool = examBank[difficultyLevel]?.[subject];
+  if (Array.isArray(examPool) && examPool.length) return examPool;
   const pool = questionBank[subject] || [];
   return pool;
 }
@@ -284,7 +288,8 @@ function updateDifficultyHint() {
 
 function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
   const pool = getQuestionPoolForDifficulty(subject, difficultyLevel);
-  const allPool = questionBank[subject] || [];
+  const examPool = window.DY_EXAM_QUESTION_BANK?.[difficultyLevel]?.[subject];
+  const allPool = Array.isArray(examPool) && examPool.length ? examPool : (questionBank[subject] || []);
   if (!pool.length || count <= 0) return [];
 
   const uniqueEntries = new Set();
@@ -329,11 +334,13 @@ function updateQuestionCountOptions() {
   questionCountSelect.disabled = false;
   setupQuestionSummary.textContent = `${nextValue} questions`;
   questionBankNote.hidden = false;
-  const examLabel = EXAM_STANDARD_LABELS[examStandardSelect.value];
-  const examNotice = examLabel
-    ? ` Target track: ${examLabel}; these sample questions have not yet been individually verified against that exam's syllabus.`
-    : ' Select a target exam above; these sample questions have not yet been individually verified against an exam syllabus.';
-  questionBankNote.textContent = `${pool.length} available questions in this subject bank. Each question appears only once in a single round.${examNotice}`;
+  const standard = examStandardSelect.value;
+  const licensedPool = window.DY_EXAM_QUESTION_BANK?.[standard]?.[subject];
+  if (Array.isArray(licensedPool) && licensedPool.length) {
+    questionBankNote.textContent = `${licensedPool.length} questions in the ${EXAM_STANDARD_LABELS[standard]} track, with source and licence metadata. Original items are exam-style practice, not official past-paper questions.`;
+  } else {
+    questionBankNote.textContent = `${pool.length} built-in sample questions. No rights-cleared ${EXAM_STANDARD_LABELS[standard] || 'exam'} set is connected for this subject yet; these samples are not verified to that syllabus.`;
+  }
 }
 
 function updateDepartmentSubjects() {
@@ -786,6 +793,19 @@ function renderQuestion() {
   questionCount.textContent = `QUESTION ${questionIndex + 1} OF ${questions.length}`;
   scoreDisplay.textContent = String(score);
   questionCategory.textContent = current.category;
+  questionSource.replaceChildren();
+  if (current.sourceTitle) {
+    const sourceText = document.createTextNode(`${current.attribution ? `${current.attribution} — ` : ''}Source: `);
+    const sourceLink = document.createElement('a');
+    sourceLink.href = current.sourceUrl;
+    sourceLink.target = '_blank';
+    sourceLink.rel = 'noopener noreferrer';
+    sourceLink.textContent = current.sourceTitle;
+    questionSource.append(sourceText, sourceLink);
+    questionSource.hidden = false;
+  } else {
+    questionSource.hidden = true;
+  }
   questionText.textContent = current.question;
   progressTrack.setAttribute('aria-valuemax', String(questions.length));
   progressTrack.setAttribute('aria-valuenow', String(questionIndex));

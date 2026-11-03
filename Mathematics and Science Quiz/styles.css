@@ -99,6 +99,8 @@ h1 span { color: #83a879; }
 .progress-track { height: 5px; overflow: hidden; border-radius: 8px; background: #edf1e9; }
 .progress-fill { display: block; width: 0; height: 100%; border-radius: inherit; background: #94b585; transition: width .3s ease; }
 .question-category { margin: 26px 0 9px; color: #a47d62; }
+.question-source { margin: -2px 0 10px; color: #9db1ca; font-size: 10px; line-height: 1.5; overflow-wrap: anywhere; }
+.question-source a { color: #ffe16b; text-underline-offset: 2px; }
 .question-text { min-height: 52px; margin: 0 0 18px; font: 700 20px/1.4 'Manrope', sans-serif; letter-spacing: -.45px; }
 .answers { display: grid; gap: 9px; }
 .answer-option { display: flex; align-items: center; width: 100%; min-height: 43px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 7px; color: #4e5c52; background: #fff; text-align: left; font-size: 12px; cursor: pointer; transition: border-color .15s ease, background .15s ease; }
