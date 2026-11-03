@@ -1,9 +1,11 @@
 ﻿const STORAGE_KEYS = {
   access: 'distinct-youngsters-access',
   records: 'distinct-youngsters-records',
+  profiles: 'distinct-youngsters-profiles',
 };
 const ADMIN_EMAIL = 'adesanya.adegbemi@gmail.com';
-const MAX_TRIAL_ATTEMPTS = 20;
+const FREE_QUESTION_LIMIT = 18;
+const TRIAL_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 
 const questionBank = {
   math: [
@@ -168,6 +170,17 @@ const departmentSubjects = {
 };
 
 const setupPanel = document.querySelector('#setup-panel');
+const signInPanel = document.querySelector('#sign-in-panel');
+const signInForm = document.querySelector('#sign-in-form');
+const signInEmailInput = document.querySelector('#sign-in-email');
+const signInStatus = document.querySelector('#sign-in-status');
+const createProfileButton = document.querySelector('#create-profile-button');
+const switchProfileButton = document.querySelector('#switch-profile-button');
+const trialStatus = document.querySelector('#trial-status');
+const startButton = document.querySelector('#start-button');
+const participantRegistrationForm = document.querySelector('#participant-registration-form');
+const participantRegistrationStatus = document.querySelector('#participant-registration-status');
+const participantEmailFallback = document.querySelector('#participant-email-fallback');
 const quizPanel = document.querySelector('#quiz-panel');
 const resultPanel = document.querySelector('#result-panel');
 const candidateNameInput = document.querySelector('#candidate-name');
@@ -215,6 +228,8 @@ let timeRemaining = 30 * 60;
 let timerInterval = null;
 let pendingInstallPrompt = null;
 let trialAttemptStart = 0;
+let requestedRoundCount = 20;
+let trialLimitApplied = false;
 
 function shuffle(items) {
   const cloned = [...items];
@@ -237,38 +252,67 @@ function getClassGrade(className) {
 }
 
 function getDifficulty(age, className) {
-  const ageValue = Number(age || 0);
   const classValue = getClassGrade(className);
-  const values = [Number.isFinite(ageValue) && ageValue > 0 ? Math.min(12, Math.max(1, ageValue - 5)) : null, classValue].filter((value) => value !== null && Number.isFinite(value));
-  const estimate = values.length ? values.reduce((total, value) => total + value, 0) / values.length : 6;
-  if (estimate <= 4) return 'easy';
-  if (estimate <= 8) return 'standard';
-  return 'advanced';
+  const ageValue = Number(age || 0);
+  const gradeValue = classValue ?? (Number.isFinite(ageValue) && ageValue > 0 ? Math.min(12, Math.max(1, Math.ceil(ageValue / 2))) : 8);
+  return gradeValue >= 9 ? 'gcse' : 'elementary';
+}
+
+function initialiseQuestionBanding() {
+  Object.values(questionBank).forEach((subjectQuestions) => {
+    if (!Array.isArray(subjectQuestions) || !subjectQuestions.length) return;
+    const splitIndex = Math.max(4, Math.ceil(subjectQuestions.length / 2));
+    subjectQuestions.forEach((question, index) => {
+      question.level = index < splitIndex ? 'elementary' : 'gcse';
+    });
+  });
+}
+
+function getQuestionPoolForDifficulty(subject, difficultyLevel) {
+  const pool = questionBank[subject] || [];
+  if (!pool.length) return [];
+  const requestedLevel = difficultyLevel === 'gcse' ? 'gcse' : 'elementary';
+  const matching = pool.filter((question) => (question.level || 'gcse') === requestedLevel);
+  return matching.length ? matching : pool;
 }
 
 function updateDifficultyHint() {
   if (!candidateAgeInput.value && !candidateClassInput.value.trim()) {
-    difficultyNote.textContent = "Quiz difficulty will be matched to the candidate's age and class.";
+    difficultyNote.textContent = 'Quiz difficulty is set to elementary for Grade 8 and below, and GCSE/WAEC standard from Grade 9 and above.';
     return;
   }
   const level = getDifficulty(candidateAgeInput.value, candidateClassInput.value);
-  const labels = { easy: 'Easy', standard: 'Standard', advanced: 'Advanced' };
+  const labels = { elementary: 'Elementary', gcse: 'GCSE/WAEC standard' };
   difficultyNote.textContent = `Estimated quiz difficulty: ${labels[level]} (based on age and class).`;
 }
 
-function buildQuestionSet(subject, count) {
-  const pool = questionBank[subject] || [];
+function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
+  const pool = getQuestionPoolForDifficulty(subject, difficultyLevel);
+  const allPool = questionBank[subject] || [];
   if (!pool.length || count <= 0) return [];
 
+  const uniqueEntries = new Set();
   const selected = [];
-  while (selected.length < count) {
-    const round = shuffle(pool);
-    if (selected.length && round.length > 1 && round[0].question === selected[selected.length - 1].question) {
-      [round[0], round[1]] = [round[1], round[0]];
-    }
-    selected.push(...round.slice(0, count - selected.length));
-  }
-  return selected;
+
+  shuffle(pool).forEach((item) => {
+    if (selected.length >= count) return;
+    const key = `${item.category}::${item.question}`;
+    if (uniqueEntries.has(key)) return;
+    uniqueEntries.add(key);
+    selected.push(item);
+  });
+
+  if (selected.length >= count) return selected.slice(0, count);
+
+  shuffle(allPool).forEach((item) => {
+    if (selected.length >= count) return;
+    const key = `${item.category}::${item.question}`;
+    if (uniqueEntries.has(key)) return;
+    uniqueEntries.add(key);
+    selected.push(item);
+  });
+
+  return selected.slice(0, count);
 }
 
 function updateQuestionCountOptions() {
@@ -289,7 +333,7 @@ function updateQuestionCountOptions() {
   questionCountSelect.disabled = false;
   setupQuestionSummary.textContent = `${nextValue} questions`;
   questionBankNote.hidden = false;
-  questionBankNote.textContent = `${pool.length} questions in this subject bank. Longer rounds reuse questions after the bank is exhausted.`;
+  questionBankNote.textContent = `${pool.length} unique questions in this subject bank. Each question appears only once in a single round.`;
 }
 
 function updateDepartmentSubjects() {
@@ -305,19 +349,160 @@ function escapeForText(value) {
 }
 
 function getStoredAccess(email) {
-  const raw = window.localStorage.getItem('distinct-youngsters-access');
-  const all = raw ? JSON.parse(raw) : {};
+  const raw = window.localStorage.getItem(STORAGE_KEYS.access);
+  let all = {};
+  try { all = raw ? JSON.parse(raw) : {}; } catch { all = {}; }
   const key = String(email || '').trim().toLowerCase();
   return key ? (all[key] || { approved: false, plan: 'trial', attempts: 0, email: key }) : { approved: false, plan: 'trial', attempts: 0, email: '' };
 }
 
 function setStoredAccess(email, data) {
-  const raw = window.localStorage.getItem('distinct-youngsters-access');
-  const all = raw ? JSON.parse(raw) : {};
+  const raw = window.localStorage.getItem(STORAGE_KEYS.access);
+  let all = {};
+  try { all = raw ? JSON.parse(raw) : {}; } catch { all = {}; }
   const key = String(email || '').trim().toLowerCase();
   all[key] = { ...getStoredAccess(key), ...data, email: key, updatedAt: new Date().toISOString() };
-  window.localStorage.setItem('distinct-youngsters-access', JSON.stringify(all));
+  window.localStorage.setItem(STORAGE_KEYS.access, JSON.stringify(all));
   return all[key];
+}
+
+function getStoredProfiles() {
+  try { return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.profiles) || '{}'); } catch { return {}; }
+}
+
+function saveParticipantProfile(profile) {
+  const email = String(profile.email || '').trim().toLowerCase();
+  if (!email) return;
+  const profiles = getStoredProfiles();
+  profiles[email] = {
+    name: profile.name,
+    email,
+    age: profile.age,
+    className: profile.className,
+    departmentValue: profile.departmentValue,
+    subjectValue: profile.subjectValue,
+    questionCount: profile.questionCount,
+    timeLimit: profile.timeLimit,
+  };
+  window.localStorage.setItem(STORAGE_KEYS.profiles, JSON.stringify(profiles));
+}
+
+function restoreParticipantProfile(profile) {
+  candidateNameInput.value = profile.name || '';
+  candidateAgeInput.value = profile.age || '';
+  candidateClassInput.value = profile.className || '';
+  candidateEmailInput.value = profile.email || '';
+  departmentSelect.value = profile.departmentValue || '';
+  updateDepartmentSubjects();
+  if (profile.subjectValue && [...subjectSelect.options].some((option) => option.value === profile.subjectValue)) {
+    subjectSelect.value = profile.subjectValue;
+    updateQuestionCountOptions();
+  }
+  if (profile.questionCount && [...questionCountSelect.options].some((option) => option.value === String(profile.questionCount))) {
+    questionCountSelect.value = String(profile.questionCount);
+    setupQuestionSummary.textContent = `${questionCountSelect.value} questions`;
+  }
+  if (profile.timeLimit && [...timeLimitSelect.options].some((option) => option.value === String(profile.timeLimit))) {
+    timeLimitSelect.value = String(profile.timeLimit);
+    setupTimeSummary.textContent = `${timeLimitSelect.value} minutes`;
+  }
+  updateDifficultyHint();
+}
+
+function getTrialExpiry(access) {
+  const startedAt = Date.parse(access.trialStartedAt || '');
+  return Number.isFinite(startedAt) ? startedAt + TRIAL_DURATION_MS : null;
+}
+
+function isTrialExpired(access) {
+  const expiresAt = getTrialExpiry(access);
+  return expiresAt !== null && Date.now() >= expiresAt;
+}
+
+function updateTrialStatus(email) {
+  if (!trialStatus) return;
+  const access = getStoredAccess(email);
+  if (access.approved) {
+    trialStatus.textContent = 'Full access is enabled for this browser profile.';
+    return;
+  }
+  const expiresAt = getTrialExpiry(access);
+  if (expiresAt === null) {
+    trialStatus.textContent = 'Your 7-day full-access trial starts with your first quiz. After it ends, each selected 20, 30, 40, or 50-question round is limited to 18 questions.';
+  } else if (Date.now() < expiresAt) {
+    const date = new Date(expiresAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    trialStatus.textContent = `Your 7-day full-access trial ends ${date}. After that, each selected round is limited to 18 questions.`;
+  } else {
+    trialStatus.textContent = 'Your free week has ended. Choose 20, 30, 40, or 50; each round will contain only 18 questions. Request full access to continue beyond 18.';
+  }
+}
+
+async function forwardParticipantDetails(participant) {
+  const access = getStoredAccess(participant.email);
+  if (access.participantDetailsForwardedAt) return true;
+
+  const status = participantRegistrationStatus;
+  participantEmailFallback.hidden = true;
+  status.hidden = false;
+  status.textContent = 'Sending participant name and email to the quiz administrator…';
+  const nameField = participantRegistrationForm.querySelector('[name="name"]');
+  const emailField = participantRegistrationForm.querySelector('[name="email"]');
+  nameField.value = participant.name;
+  emailField.value = participant.email;
+
+  try {
+    const response = await fetch(participantRegistrationForm.action, {
+      method: 'POST',
+      body: new FormData(participantRegistrationForm),
+      headers: { Accept: 'application/json' },
+    });
+    if (!response.ok) throw new Error('Email service unavailable');
+    setStoredAccess(participant.email, { participantDetailsForwardedAt: new Date().toISOString() });
+    status.textContent = 'Participant name and email sent to the quiz administrator.';
+    return true;
+  } catch {
+    participantEmailFallback.href = `mailto:${ADMIN_EMAIL}?${new URLSearchParams({
+      subject: 'Quiz participant registration',
+      body: `New quiz participant\nName: ${participant.name}\nEmail: ${participant.email}`,
+    }).toString()}`;
+    participantEmailFallback.hidden = false;
+    status.textContent = 'Automatic email delivery failed. The quiz can continue, but please use the email link to forward the participant details.';
+    return false;
+  }
+}
+
+function initialiseProfileControls() {
+  signInForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const email = signInEmailInput.value.trim().toLowerCase();
+    const profile = getStoredProfiles()[email];
+    signInStatus.hidden = false;
+    if (!profile) {
+      signInStatus.textContent = 'No saved profile was found on this device. Choose “Create a profile” to enter your details once.';
+      return;
+    }
+    restoreParticipantProfile(profile);
+    signInPanel.hidden = true;
+    setupPanel.hidden = false;
+    signInStatus.hidden = true;
+    updateTrialStatus(email);
+    candidateNameInput.focus({ preventScroll: true });
+  });
+
+  createProfileButton.addEventListener('click', () => {
+    signInPanel.hidden = true;
+    setupPanel.hidden = false;
+    updateTrialStatus(candidateEmailInput.value.trim());
+    candidateNameInput.focus({ preventScroll: true });
+  });
+
+  switchProfileButton.addEventListener('click', () => {
+    setupPanel.hidden = true;
+    signInPanel.hidden = false;
+    signInStatus.hidden = true;
+    signInEmailInput.value = '';
+    signInEmailInput.focus({ preventScroll: true });
+  });
 }
 
 function getStoredRecords() {
@@ -347,25 +532,6 @@ function updateParticipantRecord(participant) {
   if (index >= 0) records[index] = { ...records[index], ...nextRecord };
   else records.push(nextRecord);
   saveStoredRecords(records);
-}
-
-function hasApprovedAccess(email) {
-  return Boolean(getStoredAccess(email).approved);
-}
-
-function applyApprovalFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  const email = params.get('email');
-  if (!email) return false;
-  if (params.get('approved') === '1') {
-    setStoredAccess(email, { approved: true, plan: 'approved', attempts: 0 });
-    return true;
-  }
-  if (params.get('declined') === '1') {
-    setStoredAccess(email, { approved: false, plan: 'trial', attempts: 0 });
-    return true;
-  }
-  return false;
 }
 
 function buildAccessRequestBody(details) {
@@ -504,7 +670,7 @@ function startTimer() {
   timerInterval = setInterval(updateTimer, 1000);
 }
 
-function startQuiz(event) {
+async function startQuiz(event) {
   event.preventDefault();
   const participantEmail = candidateEmailInput.value.trim();
   if (!participantEmail) {
@@ -524,23 +690,35 @@ function startQuiz(event) {
   };
 
   const accessState = getStoredAccess(candidate.email);
-
-  trialAttemptStart = Number(accessState.attempts || 0);
-  if (!accessState.approved && trialAttemptStart >= MAX_TRIAL_ATTEMPTS) {
-    openAccessModal();
-    return;
-  }
-  if (!hasApprovedAccess(candidate.email)) {
-    setStoredAccess(candidate.email, { approved: false, plan: 'trial', attempts: trialAttemptStart });
-  }
-
   quizDifficultyLevel = getDifficulty(candidate.age, candidate.className);
   const requestedCount = Number(questionCountSelect.value) || 20;
-  const allowedCount = accessState.approved
-    ? requestedCount
-    : Math.min(requestedCount, MAX_TRIAL_ATTEMPTS - trialAttemptStart);
+  requestedRoundCount = requestedCount;
+  trialAttemptStart = Number(accessState.attempts || 0);
+  let currentAccess = accessState;
+  if (!accessState.approved && !accessState.trialStartedAt) {
+    currentAccess = setStoredAccess(candidate.email, {
+      approved: false,
+      plan: 'trial',
+      trialStartedAt: new Date().toISOString(),
+      attempts: trialAttemptStart,
+    });
+  }
+  const trialExpired = !currentAccess.approved && isTrialExpired(currentAccess);
+  trialLimitApplied = trialExpired && requestedCount > FREE_QUESTION_LIMIT;
+  const allowedCount = trialExpired ? Math.min(FREE_QUESTION_LIMIT, requestedCount) : requestedCount;
+  saveParticipantProfile({
+    ...candidate,
+    departmentValue: departmentSelect.value,
+    subjectValue: subjectSelect.value,
+    questionCount: requestedCount,
+    timeLimit: timeLimitSelect.value,
+  });
+  startButton.disabled = true;
+  await forwardParticipantDetails(candidate);
+  startButton.disabled = false;
+  updateTrialStatus(candidate.email);
   const requestedTimeLimit = Number(timeLimitSelect.value) || 30;
-  questions = buildQuestionSet(subjectSelect.value, allowedCount);
+  questions = buildQuestionSet(subjectSelect.value, allowedCount, quizDifficultyLevel);
   questionIndex = 0;
   score = 0;
   timeRemaining = requestedTimeLimit * 60;
@@ -601,11 +779,6 @@ function selectAnswer(index) {
 
 function checkAnswer() {
   if (answered) {
-    const access = getStoredAccess(candidate.email);
-    if (!access.approved && Number(access.attempts || 0) >= MAX_TRIAL_ATTEMPTS) {
-      openAccessModal();
-      return;
-    }
     questionIndex += 1;
     if (questionIndex >= questions.length) showResults();
     else renderQuestion();
@@ -637,7 +810,7 @@ function checkAnswer() {
     setStoredAccess(candidate.email, { approved: false, plan: 'trial', attempts: totalAttempts });
     updateParticipantRecord({ ...candidate, attempts: totalAttempts, score });
   }
-  if (!access.approved && trialAttemptStart + attemptCount >= MAX_TRIAL_ATTEMPTS) {
+  if (trialLimitApplied && attemptCount >= questions.length) {
     nextButton.innerHTML = 'Unlock full access <span aria-hidden="true">→</span>';
     openAccessModal();
     return;
@@ -683,14 +856,17 @@ function showResults(timeExpired = false) {
 function restartQuiz() {
   resultPanel.hidden = true;
   setupPanel.hidden = false;
+  signInPanel.hidden = true;
   candidateNameInput.focus({ preventScroll: true });
 }
 
 setupPanel.addEventListener('submit', startQuiz);
+initialiseProfileControls();
 departmentSelect.addEventListener('change', updateDepartmentSubjects);
 subjectSelect.addEventListener('change', updateQuestionCountOptions);
 candidateAgeInput.addEventListener('input', updateDifficultyHint);
 candidateClassInput.addEventListener('input', updateDifficultyHint);
+candidateEmailInput.addEventListener('change', () => updateTrialStatus(candidateEmailInput.value.trim()));
 nextButton.addEventListener('click', checkAnswer);
 restartButton.addEventListener('click', restartQuiz);
 questionCountSelect.addEventListener('change', () => {
@@ -738,7 +914,8 @@ if (window.matchMedia('(display-mode: standalone)').matches || navigator.standal
 }
 
 setupTimeSummary.textContent = `${timeLimitSelect.value} minutes`;
+initialiseQuestionBanding();
 updateDifficultyHint();
 updateDepartmentSubjects();
-applyApprovalFromUrl();
+updateTrialStatus('');
 initialiseAccessControls();
