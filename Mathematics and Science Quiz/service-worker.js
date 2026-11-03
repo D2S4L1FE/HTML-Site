@@ -1,4 +1,4 @@
-const CACHE_NAME = 'distinct-youngsters-v15';
+const CACHE_NAME = 'distinct-youngsters-v18';
 const APP_FILES = [
   './',
   './index.html',

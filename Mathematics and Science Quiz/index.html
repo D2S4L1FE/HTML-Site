@@ -23,6 +23,7 @@
         <span>Distinct Youngsters<span class="brand-dot">.</span></span>
       </a>
       <span class="top-note"><span class="status-dot" aria-hidden="true"></span> A little learning goes a long way</span>
+      <button class="session-button" id="sign-out-button" type="button" hidden>Sign out</button>
       <button class="install-button" id="install-button" type="button" aria-label="Install Distinct Youngsters app">
         <span aria-hidden="true">↓</span> Install app
       </button>
@@ -35,7 +36,7 @@
       <div class="card-content">
         <div class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">✦</span> YOUR DAILY BRAIN BOOST</div>
         <h1 id="page-title">Curiosity looks<br><span>good on you.</span></h1>
-        <p class="intro">Choose your department and a school subject. Your quiz is matched to your class and age, with instant feedback to help you learn.</p>
+        <p class="intro">Choose your target exam, department, and subject. Practise with multiple-choice questions and instant feedback.</p>
 
         <section class="sign-in-panel" id="sign-in-panel" aria-labelledby="sign-in-title">
           <p class="eyebrow">WELCOME BACK</p>
@@ -70,6 +71,21 @@
               <input class="text-input" id="candidate-class" name="candidateClass" type="text" autocomplete="off" maxlength="40" placeholder="e.g. Grade 6 or JSS 1" required>
             </div>
           </div>
+            <div class="form-field">
+              <label class="field-label" for="exam-standard-select">TARGET EXAMINATION STANDARD</label>
+              <div class="select-wrap">
+                <span class="select-icon" aria-hidden="true">◇</span>
+                <select id="exam-standard-select" name="examStandard" required>
+                  <option value="" selected disabled>Select an exam standard</option>
+                  <option value="waec">WAEC</option>
+                  <option value="neco">NECO</option>
+                  <option value="jamb">JAMB / UTME</option>
+                  <option value="gcse">GCSE</option>
+                </select>
+                <span class="select-chevron" aria-hidden="true">⌄</span>
+              </div>
+              <p class="difficulty-note">Choose the examination you are preparing for. The selected track appears on the quiz and saved results.</p>
+            </div>
           <div class="form-field">
             <label class="field-label" for="candidate-email">YOUR EMAIL</label>
             <input class="text-input" id="candidate-email" name="candidateEmail" type="email" autocomplete="email" maxlength="120" placeholder="you@example.com" required>
@@ -78,7 +94,7 @@
             <input id="participant-email-consent" name="participantEmailConsent" type="checkbox" required>
             <span>I agree to send the participant’s name and email via FormSubmit to <strong>adesanya.adegbemi@gmail.com</strong> for quiz administration. If the participant is under 18, a parent or guardian has approved.</span>
           </label>
-          <p class="difficulty-note" id="difficulty-note" aria-live="polite">Quiz difficulty will be matched to the candidate's age and class.</p>
+          <p class="difficulty-note" id="difficulty-note" aria-live="polite">Select the examination standard you are preparing for.</p>
           <div class="form-field">
             <label class="field-label" for="department-select">CHOOSE YOUR DEPARTMENT</label>
             <div class="select-wrap">

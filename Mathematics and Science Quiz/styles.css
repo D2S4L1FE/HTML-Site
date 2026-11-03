@@ -36,6 +36,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .install-button { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; gap: 6px; min-height: 34px; padding: 0 11px; border: 1px solid #dce6d7; border-radius: 7px; color: var(--green-dark); background: #fffefa; font-size: 10px; font-weight: 700; cursor: pointer; }
 .install-button:hover { background: #f0f5eb; }
 .install-button span { font-size: 14px; }
+.session-button { flex: 0 0 auto; min-height: 34px; padding: 0 10px; border: 1px solid #3b5274; border-radius: 6px; color: #ffe16b; background: #11233d; font-size: 10px; font-weight: 700; cursor: pointer; }
+.session-button:hover { border-color: #4bc8e8; background: #1b3151; }
 .install-status { margin: -10px 2px 15px; padding: 9px 12px; border: 1px solid #e3eadf; border-radius: 7px; color: #60765a; background: #f7faf4; font-size: 11px; line-height: 1.5; }
 .quiz-card { position: relative; overflow: hidden; border: 1px solid #edf0e9; border-radius: 15px; background: var(--paper); box-shadow: 0 12px 38px #34452c0b; }
 .card-content { position: relative; z-index: 1; max-width: 402px; margin: 0 auto; padding: 45px 24px 29px; }
@@ -123,9 +125,11 @@ h1 span { color: #83a879; }
 @media (max-width: 480px) {
   .app-shell { width: min(100% - 24px, 620px); padding-top: 17px; }
   .topbar { margin-bottom: 16px; }
+  .topbar { gap: 6px; }
   .top-note { display: none; }
   .brand { gap: 7px; font-size: 14px; letter-spacing: -.7px; }
   .install-button { min-height: 32px; padding: 0 9px; }
+  .session-button { min-height: 32px; padding: 0 7px; font-size: 9px; }
   .card-content { padding: 36px 22px 25px; }
   .decor-one { top: 32px; right: 28px; }
   .decor-two { right: 15px; }

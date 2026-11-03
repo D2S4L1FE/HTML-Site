@@ -2,10 +2,17 @@
   access: 'distinct-youngsters-access',
   records: 'distinct-youngsters-records',
   profiles: 'distinct-youngsters-profiles',
+  activeEmail: 'distinct-youngsters-active-email',
 };
 const ADMIN_EMAIL = 'adesanya.adegbemi@gmail.com';
 const FREE_QUESTION_LIMIT = 18;
 const TRIAL_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
+const EXAM_STANDARD_LABELS = {
+  waec: 'WAEC',
+  neco: 'NECO',
+  jamb: 'JAMB / UTME',
+  gcse: 'GCSE',
+};
 
 const questionBank = {
   math: [
@@ -187,6 +194,7 @@ const candidateNameInput = document.querySelector('#candidate-name');
 const candidateAgeInput = document.querySelector('#candidate-age');
 const candidateClassInput = document.querySelector('#candidate-class');
 const candidateEmailInput = document.querySelector('#candidate-email');
+const examStandardSelect = document.querySelector('#exam-standard-select');
 const difficultyNote = document.querySelector('#difficulty-note');
 const departmentSelect = document.querySelector('#department-select');
 const subjectSelect = document.querySelector('#subject-select');
@@ -216,6 +224,7 @@ const resultBadge = document.querySelector('#result-badge');
 const restartButton = document.querySelector('#restart-button');
 const installButton = document.querySelector('#install-button');
 const installStatus = document.querySelector('#install-status');
+const signOutButton = document.querySelector('#sign-out-button');
 
 let questions = [];
 let questionIndex = 0;
@@ -258,32 +267,19 @@ function getDifficulty(age, className) {
   return gradeValue >= 9 ? 'gcse' : 'elementary';
 }
 
-function initialiseQuestionBanding() {
-  Object.values(questionBank).forEach((subjectQuestions) => {
-    if (!Array.isArray(subjectQuestions) || !subjectQuestions.length) return;
-    const splitIndex = Math.max(4, Math.ceil(subjectQuestions.length / 2));
-    subjectQuestions.forEach((question, index) => {
-      question.level = index < splitIndex ? 'elementary' : 'gcse';
-    });
-  });
-}
-
 function getQuestionPoolForDifficulty(subject, difficultyLevel) {
   const pool = questionBank[subject] || [];
-  if (!pool.length) return [];
-  const requestedLevel = difficultyLevel === 'gcse' ? 'gcse' : 'elementary';
-  const matching = pool.filter((question) => (question.level || 'gcse') === requestedLevel);
-  return matching.length ? matching : pool;
+  return pool;
 }
 
 function updateDifficultyHint() {
   if (!candidateAgeInput.value && !candidateClassInput.value.trim()) {
-    difficultyNote.textContent = 'Quiz difficulty is set to elementary for Grade 8 and below, and GCSE/WAEC standard from Grade 9 and above.';
+    difficultyNote.textContent = 'Choose a target exam standard. The quiz will be labelled WAEC, NECO, JAMB/UTME, or GCSE.';
     return;
   }
   const level = getDifficulty(candidateAgeInput.value, candidateClassInput.value);
-  const labels = { elementary: 'Elementary', gcse: 'GCSE/WAEC standard' };
-  difficultyNote.textContent = `Estimated quiz difficulty: ${labels[level]} (based on age and class).`;
+  const stage = level === 'gcse' ? 'senior secondary' : 'junior secondary';
+  difficultyNote.textContent = `Learner stage estimate: ${stage}. Select the target examination standard below.`;
 }
 
 function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
@@ -333,7 +329,11 @@ function updateQuestionCountOptions() {
   questionCountSelect.disabled = false;
   setupQuestionSummary.textContent = `${nextValue} questions`;
   questionBankNote.hidden = false;
-  questionBankNote.textContent = `${pool.length} unique questions in this subject bank. Each question appears only once in a single round.`;
+  const examLabel = EXAM_STANDARD_LABELS[examStandardSelect.value];
+  const examNotice = examLabel
+    ? ` Target track: ${examLabel}; these sample questions have not yet been individually verified against that exam's syllabus.`
+    : ' Select a target exam above; these sample questions have not yet been individually verified against an exam syllabus.';
+  questionBankNote.textContent = `${pool.length} available questions in this subject bank. Each question appears only once in a single round.${examNotice}`;
 }
 
 function updateDepartmentSubjects() {
@@ -370,6 +370,44 @@ function getStoredProfiles() {
   try { return JSON.parse(window.localStorage.getItem(STORAGE_KEYS.profiles) || '{}'); } catch { return {}; }
 }
 
+function setActiveProfile(email) {
+  const key = String(email || '').trim().toLowerCase();
+  if (key) window.localStorage.setItem(STORAGE_KEYS.activeEmail, key);
+  signOutButton.hidden = !key;
+}
+
+function signOut() {
+  window.localStorage.removeItem(STORAGE_KEYS.activeEmail);
+  clearInterval(timerInterval);
+  timerInterval = null;
+  closeAccessModal();
+  candidate = null;
+  questions = [];
+  quizPanel.hidden = true;
+  resultPanel.hidden = true;
+  setupPanel.hidden = true;
+  signInPanel.hidden = false;
+  signOutButton.hidden = true;
+  signInStatus.hidden = true;
+  signInEmailInput.value = '';
+  signInEmailInput.focus({ preventScroll: true });
+}
+
+function restoreActiveProfile() {
+  const email = String(window.localStorage.getItem(STORAGE_KEYS.activeEmail) || '').trim().toLowerCase();
+  const profile = getStoredProfiles()[email];
+  if (!email || !profile) {
+    window.localStorage.removeItem(STORAGE_KEYS.activeEmail);
+    signOutButton.hidden = true;
+    return;
+  }
+  restoreParticipantProfile(profile);
+  signInPanel.hidden = true;
+  setupPanel.hidden = false;
+  setActiveProfile(email);
+  updateTrialStatus(email);
+}
+
 function saveParticipantProfile(profile) {
   const email = String(profile.email || '').trim().toLowerCase();
   if (!email) return;
@@ -379,6 +417,7 @@ function saveParticipantProfile(profile) {
     email,
     age: profile.age,
     className: profile.className,
+    examStandard: profile.examStandard,
     departmentValue: profile.departmentValue,
     subjectValue: profile.subjectValue,
     questionCount: profile.questionCount,
@@ -392,6 +431,7 @@ function restoreParticipantProfile(profile) {
   candidateAgeInput.value = profile.age || '';
   candidateClassInput.value = profile.className || '';
   candidateEmailInput.value = profile.email || '';
+  examStandardSelect.value = profile.examStandard || '';
   departmentSelect.value = profile.departmentValue || '';
   updateDepartmentSubjects();
   if (profile.subjectValue && [...subjectSelect.options].some((option) => option.value === profile.subjectValue)) {
@@ -482,6 +522,7 @@ function initialiseProfileControls() {
       return;
     }
     restoreParticipantProfile(profile);
+    setActiveProfile(email);
     signInPanel.hidden = true;
     setupPanel.hidden = false;
     signInStatus.hidden = true;
@@ -497,11 +538,7 @@ function initialiseProfileControls() {
   });
 
   switchProfileButton.addEventListener('click', () => {
-    setupPanel.hidden = true;
-    signInPanel.hidden = false;
-    signInStatus.hidden = true;
-    signInEmailInput.value = '';
-    signInEmailInput.focus({ preventScroll: true });
+    signOut();
   });
 }
 
@@ -522,6 +559,7 @@ function updateParticipantRecord(participant) {
     email,
     age: participant.age,
     className: participant.className,
+    examStandard: participant.examStandard,
     department: participant.department,
     subject: participant.subject,
     attempts: Number(participant.attempts || 0),
@@ -685,12 +723,14 @@ async function startQuiz(event) {
     email: participantEmail,
     age: candidateAgeInput.value,
     className: candidateClassInput.value.trim(),
+    examStandard: examStandardSelect.value,
+    examStandardLabel: EXAM_STANDARD_LABELS[examStandardSelect.value],
     department: departmentSelect.options[departmentSelect.selectedIndex].text,
     subject: subjectSelect.options[subjectSelect.selectedIndex].text,
   };
 
   const accessState = getStoredAccess(candidate.email);
-  quizDifficultyLevel = getDifficulty(candidate.age, candidate.className);
+  quizDifficultyLevel = candidate.examStandard;
   const requestedCount = Number(questionCountSelect.value) || 20;
   requestedRoundCount = requestedCount;
   trialAttemptStart = Number(accessState.attempts || 0);
@@ -710,9 +750,11 @@ async function startQuiz(event) {
     ...candidate,
     departmentValue: departmentSelect.value,
     subjectValue: subjectSelect.value,
+    examStandard: examStandardSelect.value,
     questionCount: requestedCount,
     timeLimit: timeLimitSelect.value,
   });
+  setActiveProfile(candidate.email);
   startButton.disabled = true;
   await forwardParticipantDetails(candidate);
   startButton.disabled = false;
@@ -726,8 +768,8 @@ async function startQuiz(event) {
   setupPanel.hidden = true;
   resultPanel.hidden = true;
   quizPanel.hidden = false;
-  candidateSummary.textContent = `Quiz for ${candidate.name} · ${candidate.email} · ${candidate.department} · ${candidate.subject} · ${questions.length} questions · ${requestedTimeLimit} minutes`;
-  quizDifficulty.textContent = quizDifficultyLevel.toUpperCase();
+  candidateSummary.textContent = `Quiz for ${candidate.name} · ${candidate.email} · ${candidate.department} · ${candidate.subject} · ${candidate.examStandardLabel} standard · ${questions.length} questions · ${requestedTimeLimit} minutes`;
+  quizDifficulty.textContent = `${candidate.examStandardLabel} STANDARD`;
   updateParticipantRecord({ ...candidate, attempts: trialAttemptStart, score: 0 });
   startTimer();
   renderQuestion();
@@ -836,7 +878,7 @@ function showResults(timeExpired = false) {
           : 'Every great learner starts with a question. Try again and build momentum.';
 
   resultTitle.textContent = title;
-  resultCandidate.textContent = `${candidate.name} · Age ${candidate.age} · ${candidate.className} · ${candidate.subject}`;
+  resultCandidate.textContent = `${candidate.name} · Age ${candidate.age} · ${candidate.className} · ${candidate.subject} · ${candidate.examStandardLabel}`;
   resultPercentage.textContent = `${percent}%`;
   resultScore.textContent = `${score} out of ${questions.length} correct`;
   resultMessage.textContent = message;
@@ -862,8 +904,12 @@ function restartQuiz() {
 
 setupPanel.addEventListener('submit', startQuiz);
 initialiseProfileControls();
+signOutButton.addEventListener('click', signOut);
 departmentSelect.addEventListener('change', updateDepartmentSubjects);
 subjectSelect.addEventListener('change', updateQuestionCountOptions);
+examStandardSelect.addEventListener('change', () => {
+  if (subjectSelect.value) updateQuestionCountOptions();
+});
 candidateAgeInput.addEventListener('input', updateDifficultyHint);
 candidateClassInput.addEventListener('input', updateDifficultyHint);
 candidateEmailInput.addEventListener('change', () => updateTrialStatus(candidateEmailInput.value.trim()));
@@ -914,8 +960,8 @@ if (window.matchMedia('(display-mode: standalone)').matches || navigator.standal
 }
 
 setupTimeSummary.textContent = `${timeLimitSelect.value} minutes`;
-initialiseQuestionBanding();
 updateDifficultyHint();
 updateDepartmentSubjects();
 updateTrialStatus('');
 initialiseAccessControls();
+restoreActiveProfile();
