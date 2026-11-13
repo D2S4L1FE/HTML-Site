@@ -1,6 +1,6 @@
 # Distinct Youngsters — School Subject Quiz
 
-A responsive, accessible, installable web app for curious minds, built with plain HTML, CSS, and JavaScript. Create a learner profile with name, age, class, and email; the same browser keeps the learner signed in until they choose **Sign out**, and restores their details after reload. Choose a target exam (WAEC, NECO, JAMB/UTME, or GCSE), a Science, Commercial, or Arts department, and a subject. Choose 20, 30, 40, or 50 questions and a 30–150 minute time limit. During the first seven days after the first quiz, the selected round is available in full. After the trial, a selected round is limited to 18 questions; a full-access request appears after that capped round. Answers receive instant explanations, with a percentage score at the end. Reflection pathways and their free four-page stories are on the separate You Matter page, D2S.html.
+A responsive, accessible, installable web app for curious minds, built with plain HTML, CSS, and JavaScript. Create a learner profile with name, age, class, and email; the same browser keeps the learner signed in until they choose **Sign out**, and restores their details after reload. Choose a question-bank track (WAEC, NECO, JAMB/UTME, GCSE, or Nigeria JSS 1), a Science, Commercial, or Arts department, and a subject. The Nigeria JSS 1 track includes 100 Mathematics, 100 Basic Science, and 100 English Studies questions, each paired with its answer and explanation from the editable Markdown sources in `question-bank/`. Choose 20, 30, 40, 50, or (for a 100-question bank) 100 questions and a 30–150 minute time limit. During the first seven days after the first quiz, the selected round is available in full. After the trial, a selected round is limited to 18 questions; a full-access request appears after that capped round. Answers receive instant explanations, with a percentage score at the end. Reflection pathways and their free four-page stories are on the separate You Matter page, D2S.html.
 
 ## Run locally
 
@@ -13,30 +13,31 @@ The app must be served from a secure HTTPS website to be installable and to enab
 - **Windows:** In Microsoft Edge or Chrome, use the install icon in the address bar or the browser menu and choose **Install Distinct Youngsters**.
 - **Android:** In Chrome, tap the browser menu and choose **Install app** or **Add to Home screen**.
 
-After the first online visit, the quiz shell and questions are cached for offline use. Opening the local `index.html` file is only a preview; browser installation and service workers do not work from `file://` URLs.
+After the first online visit, the app shell and all three JSS 1 question-and-answer source files are cached for offline use. The full JSS 1 bank can then be loaded and played without internet. Profile registration emails and access requests still require a connection. Opening the local `index.html` file is only a preview; browser installation and service workers do not work from `file://` URLs.
 
 ## Features
 
 - Science, Commercial, and Arts departments with subject-specific quizzes
 - Available subjects include Mathematics, Integrated Science, English Language, Physics, Chemistry, Biology, Further Mathematics, Agricultural Science, Computer Studies / ICT, Geography, Economics, Commerce, Financial Accounting, Business Studies, Marketing, Office Practice, Literature in English, Government, History, Civic Education, and Religious Studies (CRS / IRS)
 - Required candidate name, age, class, subject, and question-count details
-- Target exam selector for WAEC, NECO, JAMB/UTME, or GCSE; selected track is displayed in the quiz and saved locally with the participant profile
-- Every subject offers 20, 30, 40, or 50 questions
+- Question-bank track selector for WAEC, NECO, JAMB/UTME, GCSE, or Nigeria JSS 1; selected track is displayed in the quiz and saved locally with the participant profile
+- Nigeria JSS 1 curriculum track with 100 Mathematics, 100 Basic Science, and 100 English Studies questions; each bank uses its numbered answer key and teaching explanations
+- Every subject offers 20, 30, 40, or 50 questions; 100 is also available for the three complete JSS 1 banks
 - Generated exam-specific Mathematics banks currently contain 150 original practice questions per WAEC, NECO, JAMB/UTME, and GCSE-style track; other subjects use built-in sample questions unless a rights-cleared subject bank is imported
 - Dark high-contrast interface with navy, electric blue, and yellow accents
 - Adjustable 30, 60, 90, 120, or 150-minute countdown
-- Installable Progressive Web App (PWA) with offline quiz access after first visit
+- Installable Progressive Web App (PWA) that precaches the app and JSS 1 banks for offline quiz access after the first online installation
 - Shuffled questions, answer choices, progress indicator, and score
 - Immediate right/wrong feedback with a brief explanation
 - Class/age stage estimate shown separately from the participant-selected exam track
 - Final percentage, score summary, and replay option
 - Responsive layout, keyboard-friendly controls, and reduced-motion support
-- A seven-day full-access trial starts with the learner's first quiz. After it expires, each selected 20-, 30-, 40-, or 50-question round is capped at 18 questions; the subscription request appears after the capped round.
+- A seven-day full-access trial starts with the learner's first quiz. After it expires, every selected round is capped at 18 questions; the subscription request appears after the capped round.
 - Email-based profile recall and persistent local sign-in save learner details in the same browser/device; a global Sign out action is available from the quiz, setup, and results screens.
 - With participant consent (and parent/guardian approval for participants under 18), the participant's name and email are sent to the administrator through FormSubmit on their first quiz. If automatic delivery fails, the page provides an email-app fallback.
 - No external libraries or runtime dependencies
 
-**Exam-standard content status:** The selector labels the requested examination track, but the current in-app subject banks are small, general sample sets and have not yet been individually validated or rewritten to WAEC, NECO, JAMB/UTME, or GCSE syllabuses. The interface flags this on the subject setup. Do not treat the current samples as a complete exam-preparation bank until subject-specific content is expanded and reviewed against current specifications.
+**Question-bank content status:** The three Nigeria JSS 1 sets are working drafts and should be checked against the applicable school scheme of work before formal assessment use. The WAEC, NECO, JAMB/UTME, and GCSE tracks continue to use their existing exam-style banks; other subjects continue to use built-in samples unless a rights-cleared subject bank is imported. The interface identifies which bank is connected.
 
 ## Exam question sources
 

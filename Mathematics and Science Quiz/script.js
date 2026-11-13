@@ -12,6 +12,17 @@ const EXAM_STANDARD_LABELS = {
   neco: 'NECO',
   jamb: 'JAMB / UTME',
   gcse: 'GCSE',
+  'nigeria-jss1': 'Nigeria JSS 1',
+};
+const CURRICULUM_BANK_SOURCES = {
+  math: './question-bank/nigeria-jss1-mathematics.md',
+  science: './question-bank/nigeria-jss1-basic-science.md',
+  english: './question-bank/nigeria-jss1-english-studies.md',
+};
+const CURRICULUM_BANK_CATEGORIES = {
+  math: 'MATHEMATICS · NIGERIA JSS 1',
+  science: 'BASIC SCIENCE · NIGERIA JSS 1',
+  english: 'ENGLISH STUDIES · NIGERIA JSS 1',
 };
 
 const questionBank = {
@@ -170,6 +181,12 @@ const subjectLabels = {
   businessStudies: 'Business Studies',
 };
 
+const CURRICULUM_SUBJECT_LABELS = {
+  math: 'Mathematics',
+  science: 'Basic Science',
+  english: 'English Studies',
+};
+
 const departmentSubjects = {
   science: ['math', 'science', 'english', 'physics', 'chemistry', 'biology', 'geography'],
   commercial: ['math', 'english', 'economics', 'commerce', 'businessStudies', 'geography'],
@@ -240,6 +257,10 @@ let pendingInstallPrompt = null;
 let trialAttemptStart = 0;
 let requestedRoundCount = 20;
 let trialLimitApplied = false;
+let curriculumQuestionBank = {};
+let curriculumBankLoaded = false;
+let curriculumBankLoadError = false;
+let curriculumBankReady = Promise.resolve();
 
 function shuffle(items) {
   const cloned = [...items];
@@ -268,7 +289,63 @@ function getDifficulty(age, className) {
   return gradeValue >= 9 ? 'gcse' : 'elementary';
 }
 
+function getSubjectLabel(subject) {
+  return examStandardSelect.value === 'nigeria-jss1'
+    ? (CURRICULUM_SUBJECT_LABELS[subject] || subjectLabels[subject])
+    : subjectLabels[subject];
+}
+
+function parseCurriculumMarkdown(markdown, subject) {
+  const sections = markdown.split('## Answer guide and explanations');
+  const questionSection = sections[0]?.split('## Questions')[1];
+  const answerSection = sections[1];
+  if (!questionSection || !answerSection) throw new Error(`Question bank format is invalid for ${subject}.`);
+
+  const answerGuide = new Map();
+  const answerPattern = /^[ \t]{0,6}(\d{1,3})\.[ \t]+\*\*([A-D])\*\*[ \t]+—[ \t]+([^\r\n]*)/gm;
+  for (const match of answerSection.matchAll(answerPattern)) {
+    answerGuide.set(Number(match[1]), { letter: match[2], fact: match[3].trim() });
+  }
+
+  const questionPattern = /^[ \t]{0,6}(\d{1,3})\.[ \t]+([\s\S]*?)(?=^[ \t]{0,6}\d{1,3}\.[ \t]+|(?![\s\S]))/gm;
+  const questions = [];
+  for (const match of questionSection.matchAll(questionPattern)) {
+    const number = Number(match[1]);
+    const entry = match[2].trim();
+    const options = entry.match(/(?:^|\s)A\.[ \t]+([\s\S]*?)\s+B\.[ \t]+([\s\S]*?)\s+C\.[ \t]+([\s\S]*?)\s+D\.[ \t]+([\s\S]*)$/);
+    const answer = answerGuide.get(number);
+    if (!options || !answer) continue;
+
+    const choices = options.slice(1).map((choice) => choice.trim());
+    const correct = answer.letter.charCodeAt(0) - 65;
+    if (choices.length !== 4 || choices.some((choice) => !choice) || correct < 0 || correct > 3) continue;
+    questions.push({
+      category: CURRICULUM_BANK_CATEGORIES[subject],
+      question: entry.slice(0, options.index).trim(),
+      answers: choices,
+      correct,
+      fact: answer.fact,
+    });
+  }
+
+  if (questions.length !== 100) throw new Error(`Expected 100 complete questions for ${subject}, found ${questions.length}.`);
+  return questions;
+}
+
+async function loadCurriculumQuestionBank() {
+  const entries = await Promise.all(Object.entries(CURRICULUM_BANK_SOURCES).map(async ([subject, source]) => {
+    const response = await fetch(source);
+    if (!response.ok) throw new Error(`Could not load ${source}.`);
+    return [subject, parseCurriculumMarkdown(await response.text(), subject)];
+  }));
+  curriculumQuestionBank = Object.fromEntries(entries);
+  curriculumBankLoaded = true;
+}
+
 function getQuestionPoolForDifficulty(subject, difficultyLevel) {
+  if (difficultyLevel === 'nigeria-jss1') {
+    return curriculumQuestionBank[subject] || questionBank[subject] || [];
+  }
   const examBank = window.DY_EXAM_QUESTION_BANK || {};
   const examPool = examBank[difficultyLevel]?.[subject];
   if (Array.isArray(examPool) && examPool.length) return examPool;
@@ -278,18 +355,20 @@ function getQuestionPoolForDifficulty(subject, difficultyLevel) {
 
 function updateDifficultyHint() {
   if (!candidateAgeInput.value && !candidateClassInput.value.trim()) {
-    difficultyNote.textContent = 'Choose a target exam standard. The quiz will be labelled WAEC, NECO, JAMB/UTME, or GCSE.';
+    difficultyNote.textContent = 'Choose an examination track or the Nigeria JSS 1 curriculum bank.';
     return;
   }
   const level = getDifficulty(candidateAgeInput.value, candidateClassInput.value);
   const stage = level === 'gcse' ? 'senior secondary' : 'junior secondary';
-  difficultyNote.textContent = `Learner stage estimate: ${stage}. Select the target examination standard below.`;
+  difficultyNote.textContent = `Learner stage estimate: ${stage}. Select an examination track or curriculum bank below.`;
 }
 
 function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
   const pool = getQuestionPoolForDifficulty(subject, difficultyLevel);
   const examPool = window.DY_EXAM_QUESTION_BANK?.[difficultyLevel]?.[subject];
-  const allPool = Array.isArray(examPool) && examPool.length ? examPool : (questionBank[subject] || []);
+  const allPool = difficultyLevel === 'nigeria-jss1'
+    ? (curriculumQuestionBank[subject] || questionBank[subject] || [])
+    : (Array.isArray(examPool) && examPool.length ? examPool : (questionBank[subject] || []));
   if (!pool.length || count <= 0) return [];
 
   const uniqueEntries = new Set();
@@ -318,7 +397,8 @@ function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
 
 function updateQuestionCountOptions() {
   const subject = subjectSelect.value;
-  const pool = questionBank[subject] || [];
+  const standard = examStandardSelect.value;
+  const pool = getQuestionPoolForDifficulty(subject, standard);
   const previousCount = Number(questionCountSelect.value);
   if (!subject || !pool.length) {
     questionCountSelect.replaceChildren(new Option('Select a subject first', '', true, true));
@@ -327,16 +407,26 @@ function updateQuestionCountOptions() {
     questionBankNote.hidden = true;
     return;
   }
-  const availableCounts = [20, 30, 40, 50];
+  const availableCounts = standard === 'nigeria-jss1' && !curriculumQuestionBank[subject]
+    ? [Math.min(pool.length, 20)]
+    : (pool.length >= 100 ? [20, 30, 40, 50, 100] : [20, 30, 40, 50]);
   questionCountSelect.replaceChildren(...availableCounts.map((count) => new Option(`${count} questions`, String(count))));
   const nextValue = availableCounts.includes(previousCount) ? String(previousCount) : String(availableCounts[0]);
   questionCountSelect.value = nextValue;
   questionCountSelect.disabled = false;
   setupQuestionSummary.textContent = `${nextValue} questions`;
   questionBankNote.hidden = false;
-  const standard = examStandardSelect.value;
+  const curriculumPool = curriculumQuestionBank[subject];
   const licensedPool = window.DY_EXAM_QUESTION_BANK?.[standard]?.[subject];
-  if (Array.isArray(licensedPool) && licensedPool.length) {
+  if (standard === 'nigeria-jss1' && curriculumPool?.length) {
+    questionBankNote.textContent = `${curriculumPool.length} Nigeria JSS 1 ${getSubjectLabel(subject)} questions with matched answers and explanations. This working draft is stored with the app for offline use.`;
+  } else if (standard === 'nigeria-jss1' && curriculumBankLoadError) {
+    questionBankNote.textContent = `The JSS 1 bank could not be loaded. The built-in sample is being used; reconnect and reload to download the local bank for offline use.`;
+  } else if (standard === 'nigeria-jss1' && !curriculumBankLoaded) {
+    questionBankNote.textContent = 'Loading the Nigeria JSS 1 question bank…';
+  } else if (standard === 'nigeria-jss1') {
+    questionBankNote.textContent = `No Nigeria JSS 1 ${getSubjectLabel(subject)} bank is available yet. The ${pool.length}-question built-in sample is not curriculum-verified.`;
+  } else if (Array.isArray(licensedPool) && licensedPool.length) {
     questionBankNote.textContent = `${licensedPool.length} questions in the ${EXAM_STANDARD_LABELS[standard]} track, with source and licence metadata. Original items are exam-style practice, not official past-paper questions.`;
   } else {
     questionBankNote.textContent = `${pool.length} built-in sample questions. No rights-cleared ${EXAM_STANDARD_LABELS[standard] || 'exam'} set is connected for this subject yet; these samples are not verified to that syllabus.`;
@@ -346,7 +436,7 @@ function updateQuestionCountOptions() {
 function updateDepartmentSubjects() {
   const subjectKeys = departmentSubjects[departmentSelect.value] || [];
   subjectSelect.replaceChildren(new Option('Select a subject', '', true, true));
-  subjectKeys.forEach((key) => subjectSelect.add(new Option(subjectLabels[key], key)));
+  subjectKeys.forEach((key) => subjectSelect.add(new Option(getSubjectLabel(key), key)));
   subjectSelect.disabled = subjectKeys.length === 0;
   updateQuestionCountOptions();
 }
@@ -475,12 +565,12 @@ function updateTrialStatus(email) {
   }
   const expiresAt = getTrialExpiry(access);
   if (expiresAt === null) {
-    trialStatus.textContent = 'Your 7-day full-access trial starts with your first quiz. After it ends, each selected 20, 30, 40, or 50-question round is limited to 18 questions.';
+    trialStatus.textContent = 'Your 7-day full-access trial starts with your first quiz. After it ends, every selected round is limited to 18 questions.';
   } else if (Date.now() < expiresAt) {
     const date = new Date(expiresAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
     trialStatus.textContent = `Your 7-day full-access trial ends ${date}. After that, each selected round is limited to 18 questions.`;
   } else {
-    trialStatus.textContent = 'Your free week has ended. Choose 20, 30, 40, or 50; each round will contain only 18 questions. Request full access to continue beyond 18.';
+    trialStatus.textContent = 'Your free week has ended. Each selected round is limited to 18 questions. Request full access to continue beyond 18.';
   }
 }
 
@@ -724,6 +814,8 @@ async function startQuiz(event) {
     return;
   }
   if (!setupPanel.reportValidity()) return;
+  await curriculumBankReady;
+  if (examStandardSelect.value === 'nigeria-jss1') updateQuestionCountOptions();
 
   candidate = {
     name: candidateNameInput.value.trim(),
@@ -928,7 +1020,12 @@ signOutButton.addEventListener('click', signOut);
 departmentSelect.addEventListener('change', updateDepartmentSubjects);
 subjectSelect.addEventListener('change', updateQuestionCountOptions);
 examStandardSelect.addEventListener('change', () => {
-  if (subjectSelect.value) updateQuestionCountOptions();
+  if (subjectSelect.value) {
+    [...subjectSelect.options].forEach((option) => {
+      if (option.value) option.textContent = getSubjectLabel(option.value);
+    });
+    updateQuestionCountOptions();
+  }
 });
 candidateAgeInput.addEventListener('input', updateDifficultyHint);
 candidateClassInput.addEventListener('input', updateDifficultyHint);
@@ -982,6 +1079,14 @@ if (window.matchMedia('(display-mode: standalone)').matches || navigator.standal
 setupTimeSummary.textContent = `${timeLimitSelect.value} minutes`;
 updateDifficultyHint();
 updateDepartmentSubjects();
+curriculumBankReady = loadCurriculumQuestionBank()
+  .then(() => {
+    if (subjectSelect.value && examStandardSelect.value === 'nigeria-jss1') updateQuestionCountOptions();
+  })
+  .catch(() => {
+    curriculumBankLoadError = true;
+    if (subjectSelect.value && examStandardSelect.value === 'nigeria-jss1') updateQuestionCountOptions();
+  });
 updateTrialStatus('');
 initialiseAccessControls();
 restoreActiveProfile();

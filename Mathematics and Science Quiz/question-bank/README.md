@@ -26,7 +26,7 @@ Build and review one class document at a time, beginning with Nigeria JSS 1, the
 - Nigeria follows the applicable Nigerian national/basic and senior-secondary curriculum, with senior subjects grouped by science, arts/humanities, and commercial pathways.
 - “British Grade 6–12” is provisionally interpreted as England’s curriculum with approximate Year 7–13 equivalents. Scotland, Wales, and Northern Ireland have different structures; adjust this mapping if another UK nation is intended.
 - Include separate CRS and Islamic Studies sections for Nigerian levels where appropriate, and use Yoruba for the Nigerian-language subject.
-- The current web quiz in `script.js` is separate from these curriculum documents unless integration is requested.
+- The web quiz's Nigeria JSS 1 track loads the Mathematics, Basic Science, and English Studies Markdown sources listed below. Each question is paired by number with its answer letter and explanation. The service worker precaches these same source files so the three banks work offline after the app has been installed or visited online once. The banks remain working drafts and need curriculum review.
 
 ## First class batch
 
