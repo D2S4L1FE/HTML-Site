@@ -1,6 +1,6 @@
 # Distinct Youngsters — School Subject Quiz
 
-A responsive, accessible, installable web app for curious minds, built with plain HTML, CSS, and JavaScript. Create a learner profile with name, age, class, and email; the same browser keeps the learner signed in until they choose **Sign out**, and restores their details after reload. Choose a question-bank track (WAEC, NECO, JAMB/UTME, GCSE, or Nigeria JSS 1), a Science, Commercial, or Arts department, and a subject. The Nigeria JSS 1 track includes 100 Mathematics, 100 Basic Science, and 100 English Studies questions, each paired with its answer and explanation from the editable Markdown sources in `question-bank/`. Choose 20, 30, 40, 50, or (for a 100-question bank) 100 questions and a 30–150 minute time limit. During the first seven days after the first quiz, the selected round is available in full. After the trial, a selected round is limited to 18 questions; a full-access request appears after that capped round. Answers receive instant explanations, with a percentage score at the end. Reflection pathways and their free four-page stories are on the separate You Matter page, D2S.html.
+A responsive, accessible, installable web app for curious minds, built with plain HTML, CSS, and JavaScript. Create a learner profile with name, age, class, and email; the same browser keeps the learner signed in until they choose **Sign out**, and restores their details after reload. Choose a question-bank track (WAEC, NECO, JAMB/UTME, GCSE, or Nigeria JSS 1), a Science, Commercial, or Arts department, and a subject. The Nigeria JSS 1 track includes 100 Mathematics, 100 Basic Science, and 100 English Studies questions, each paired with its answer and explanation from the editable Markdown sources in `question-bank/`. Choose 20, 30, 40, 50, or (for a 100-question bank) 100 questions; the quiz time is calculated automatically at 45 seconds (three-quarter minute) per question actually included in the round. During the first seven days after the first quiz, the selected round is available in full. After the trial, a selected round is limited to 18 questions; a full-access request appears after that capped round. Answers receive instant explanations, with a percentage score at the end. Reflection pathways and their free four-page stories are on the separate You Matter page, D2S.html.
 
 ## Run locally
 
@@ -25,7 +25,7 @@ After the first online visit, the app shell and all three JSS 1 question-and-ans
 - Every subject offers 20, 30, 40, or 50 questions; 100 is also available for the three complete JSS 1 banks
 - Generated exam-specific Mathematics banks currently contain 150 original practice questions per WAEC, NECO, JAMB/UTME, and GCSE-style track; other subjects use built-in sample questions unless a rights-cleared subject bank is imported
 - Dark high-contrast interface with navy, electric blue, and yellow accents
-- Adjustable 30, 60, 90, 120, or 150-minute countdown
+- Automatic countdown of 45 seconds per question actually included in the quiz (for example, 20 questions receive 15 minutes; 100 questions receive 75 minutes)
 - Installable Progressive Web App (PWA) that precaches the app and JSS 1 banks for offline quiz access after the first online installation
 - Shuffled questions, answer choices, progress indicator, and score
 - Immediate right/wrong feedback with a brief explanation

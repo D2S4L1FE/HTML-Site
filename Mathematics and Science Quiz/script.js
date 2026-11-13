@@ -6,6 +6,7 @@
 };
 const ADMIN_EMAIL = 'adesanya.adegbemi@gmail.com';
 const FREE_QUESTION_LIMIT = 18;
+const SECONDS_PER_QUESTION = 45;
 const TRIAL_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 const EXAM_STANDARD_LABELS = {
   waec: 'WAEC',
@@ -216,7 +217,7 @@ const difficultyNote = document.querySelector('#difficulty-note');
 const departmentSelect = document.querySelector('#department-select');
 const subjectSelect = document.querySelector('#subject-select');
 const questionCountSelect = document.querySelector('#question-count-select');
-const timeLimitSelect = document.querySelector('#time-limit-select');
+const timeLimitDisplay = document.querySelector('#time-limit-display');
 const setupQuestionSummary = document.querySelector('#setup-question-summary');
 const questionBankNote = document.querySelector('#question-bank-note');
 const setupTimeSummary = document.querySelector('#setup-time-summary');
@@ -251,7 +252,7 @@ let selectedAnswer = null;
 let answered = false;
 let candidate = null;
 let quizDifficultyLevel = 'standard';
-let timeRemaining = 30 * 60;
+let timeRemaining = 0;
 let timerInterval = null;
 let pendingInstallPrompt = null;
 let trialAttemptStart = 0;
@@ -269,6 +270,34 @@ function shuffle(items) {
     [cloned[i], cloned[swapIndex]] = [cloned[swapIndex], cloned[i]];
   }
   return cloned;
+}
+
+function getTimeLimitSeconds(questionTotal) {
+  return Math.max(0, Number(questionTotal) || 0) * SECONDS_PER_QUESTION;
+}
+
+function formatTimeLimit(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  if (!minutes) return `${remainingSeconds} seconds`;
+  if (!remainingSeconds) return `${minutes} minutes`;
+  return `${minutes} minutes ${remainingSeconds} seconds`;
+}
+
+function updateRoundTimeDisplay(questionTotal = Number(questionCountSelect.value)) {
+  if (!questionTotal) {
+    timeLimitDisplay.textContent = 'Choose a question count';
+    setupTimeSummary.textContent = 'Time set by question count';
+    return;
+  }
+  const email = candidateEmailInput.value.trim();
+  const access = email ? getStoredAccess(email) : null;
+  const attemptedQuestionTotal = access && !access.approved && isTrialExpired(access)
+    ? Math.min(FREE_QUESTION_LIMIT, questionTotal)
+    : questionTotal;
+  const duration = formatTimeLimit(getTimeLimitSeconds(attemptedQuestionTotal));
+  timeLimitDisplay.textContent = duration;
+  setupTimeSummary.textContent = duration;
 }
 
 function getClassGrade(className) {
@@ -404,6 +433,7 @@ function updateQuestionCountOptions() {
     questionCountSelect.replaceChildren(new Option('Select a subject first', '', true, true));
     questionCountSelect.disabled = true;
     setupQuestionSummary.textContent = 'Choose a subject';
+    updateRoundTimeDisplay(0);
     questionBankNote.hidden = true;
     return;
   }
@@ -415,6 +445,7 @@ function updateQuestionCountOptions() {
   questionCountSelect.value = nextValue;
   questionCountSelect.disabled = false;
   setupQuestionSummary.textContent = `${nextValue} questions`;
+  updateRoundTimeDisplay(Number(nextValue));
   questionBankNote.hidden = false;
   const curriculumPool = curriculumQuestionBank[subject];
   const licensedPool = window.DY_EXAM_QUESTION_BANK?.[standard]?.[subject];
@@ -518,7 +549,6 @@ function saveParticipantProfile(profile) {
     departmentValue: profile.departmentValue,
     subjectValue: profile.subjectValue,
     questionCount: profile.questionCount,
-    timeLimit: profile.timeLimit,
   };
   window.localStorage.setItem(STORAGE_KEYS.profiles, JSON.stringify(profiles));
 }
@@ -539,10 +569,7 @@ function restoreParticipantProfile(profile) {
     questionCountSelect.value = String(profile.questionCount);
     setupQuestionSummary.textContent = `${questionCountSelect.value} questions`;
   }
-  if (profile.timeLimit && [...timeLimitSelect.options].some((option) => option.value === String(profile.timeLimit))) {
-    timeLimitSelect.value = String(profile.timeLimit);
-    setupTimeSummary.textContent = `${timeLimitSelect.value} minutes`;
-  }
+  updateRoundTimeDisplay();
   updateDifficultyHint();
 }
 
@@ -851,23 +878,24 @@ async function startQuiz(event) {
     subjectValue: subjectSelect.value,
     examStandard: examStandardSelect.value,
     questionCount: requestedCount,
-    timeLimit: timeLimitSelect.value,
   });
   setActiveProfile(candidate.email);
   startButton.disabled = true;
   await forwardParticipantDetails(candidate);
   startButton.disabled = false;
   updateTrialStatus(candidate.email);
-  const requestedTimeLimit = Number(timeLimitSelect.value) || 30;
   questions = buildQuestionSet(subjectSelect.value, allowedCount, quizDifficultyLevel);
+  const requestedTimeLimit = getTimeLimitSeconds(questions.length);
+  const requestedTimeLabel = formatTimeLimit(requestedTimeLimit);
+  updateRoundTimeDisplay(questions.length);
   questionIndex = 0;
   score = 0;
-  timeRemaining = requestedTimeLimit * 60;
+  timeRemaining = requestedTimeLimit;
 
   setupPanel.hidden = true;
   resultPanel.hidden = true;
   quizPanel.hidden = false;
-  candidateSummary.textContent = `Quiz for ${candidate.name} · ${candidate.email} · ${candidate.department} · ${candidate.subject} · ${candidate.examStandardLabel} standard · ${questions.length} questions · ${requestedTimeLimit} minutes`;
+  candidateSummary.textContent = `Quiz for ${candidate.name} · ${candidate.email} · ${candidate.department} · ${candidate.subject} · ${candidate.examStandardLabel} standard · ${questions.length} questions · ${requestedTimeLabel}`;
   quizDifficulty.textContent = `${candidate.examStandardLabel} STANDARD`;
   updateParticipantRecord({ ...candidate, attempts: trialAttemptStart, score: 0 });
   startTimer();
@@ -1029,14 +1057,15 @@ examStandardSelect.addEventListener('change', () => {
 });
 candidateAgeInput.addEventListener('input', updateDifficultyHint);
 candidateClassInput.addEventListener('input', updateDifficultyHint);
-candidateEmailInput.addEventListener('change', () => updateTrialStatus(candidateEmailInput.value.trim()));
+candidateEmailInput.addEventListener('change', () => {
+  updateTrialStatus(candidateEmailInput.value.trim());
+  updateRoundTimeDisplay();
+});
 nextButton.addEventListener('click', checkAnswer);
 restartButton.addEventListener('click', restartQuiz);
 questionCountSelect.addEventListener('change', () => {
   setupQuestionSummary.textContent = `${questionCountSelect.value} questions`;
-});
-timeLimitSelect.addEventListener('change', () => {
-  setupTimeSummary.textContent = `${timeLimitSelect.value} minutes`;
+  updateRoundTimeDisplay();
 });
 
 window.addEventListener('beforeinstallprompt', (event) => {
@@ -1076,7 +1105,7 @@ if (window.matchMedia('(display-mode: standalone)').matches || navigator.standal
   installButton.hidden = true;
 }
 
-setupTimeSummary.textContent = `${timeLimitSelect.value} minutes`;
+updateRoundTimeDisplay();
 updateDifficultyHint();
 updateDepartmentSubjects();
 curriculumBankReady = loadCurriculumQuestionBank()
