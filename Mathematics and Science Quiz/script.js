@@ -6,7 +6,7 @@
 };
 const ADMIN_EMAIL = 'adesanya.adegbemi@gmail.com';
 const FREE_QUESTION_LIMIT = 18;
-const SECONDS_PER_QUESTION = 45;
+const SECONDS_PER_QUESTION = 0;
 const TRIAL_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 const EXAM_STANDARD_LABELS = {
   waec: 'WAEC',
@@ -82,6 +82,78 @@ const questionBank = {
     { category: 'ENGLISH', question: 'What is the plural of “child”?', answers: ['childs', 'children', 'childes', 'childrens'], correct: 1, fact: 'Children is the irregular plural form.' },
     { category: 'ENGLISH', question: 'Which is the passive voice sentence?', answers: ['Ada wrote the letter.', 'The letter was written by Ada.', 'Ada is writing.', 'Ada will write tomorrow.'], correct: 1, fact: 'In passive voice, the subject receives the action.' },
     { category: 'ENGLISH', question: 'Which sentence uses a semicolon correctly?', answers: ['I studied; and passed.', 'The bell rang; we entered.', 'She; likes reading.', 'They went; home.'], correct: 1, fact: 'A semicolon joins two related independent clauses.' },
+  ],
+  accounting: [
+    { category: 'ACCOUNTING', question: 'Which accounting concept treats a business as separate from its owner?', answers: ['Business entity concept', 'Matching concept', 'Going concern concept', 'Historical cost concept'], correct: 0, fact: 'The business entity concept keeps the business and its owner separate.' },
+    { category: 'ACCOUNTING', question: 'The accounting equation is:', answers: ['Assets = Liabilities + Capital', 'Assets + Liabilities = Capital', 'Liabilities = Assets + Capital', 'Assets = Capital - Liabilities'], correct: 0, fact: 'Assets are funded by liabilities and owner’s capital.' },
+    { category: 'ACCOUNTING', question: 'The book used to record credit sales is the:', answers: ['Sales day book', 'Cash book', 'Journal proper', 'Petty cash book'], correct: 0, fact: 'The sales day book records credit sales before posting to the ledger.' },
+    { category: 'ACCOUNTING', question: 'A debit entry normally increases:', answers: ['Capital', 'Sales', 'Asset', 'Income'], correct: 2, fact: 'Debits increase asset accounts.' },
+    { category: 'ACCOUNTING', question: 'The principal book of final entry is the:', answers: ['Cash book', 'Journal', 'Ledger', 'Invoice book'], correct: 2, fact: 'The ledger is the main book of final entry.' },
+    { category: 'ACCOUNTING', question: 'Depreciation is the:', answers: ['Loss of value due to inflation', 'Apportionment of cost over useful life', 'Reduction of liabilities', 'Gain from disposal of asset'], correct: 1, fact: 'Depreciation spreads the cost of a non-current asset over its useful life.' },
+    { category: 'ACCOUNTING', question: 'Current assets include:', answers: ['Plant and machinery', 'Land', 'Inventory', 'Building'], correct: 2, fact: 'Inventory is a short-term asset expected to be sold or used soon.' },
+    { category: 'ACCOUNTING', question: 'The purpose of a trial balance is to:', answers: ['Prepare final accounts', 'Check arithmetic accuracy of postings', 'Record cash receipts only', 'Calculate capital'], correct: 1, fact: 'A trial balance checks whether the ledger balances arithmetically.' },
+    { category: 'ACCOUNTING', question: 'Accounts payable are usually shown as:', answers: ['Current liabilities', 'Current assets', 'Fixed assets', 'Capital'], correct: 0, fact: 'Amounts owed to suppliers are liabilities due in the short term.' },
+    { category: 'ACCOUNTING', question: 'A profit is recorded when:', answers: ['Revenue exceeds expenses', 'Expenses exceed revenue', 'Assets equal liabilities', 'Cash is received'], correct: 0, fact: 'Profit is the excess of revenue over expenses.' },
+  ],
+  britishEnglish: [
+    { category: 'BRITISH ENGLISH', question: 'Which grammatical element identifies the naming word in a sentence?', answers: ['Verb', 'Adjective', 'Noun', 'Adverb'], correct: 2, fact: 'A noun names a person, place, thing, or idea.' },
+    { category: 'BRITISH ENGLISH', question: 'Which word is the antonym of “ancient”?', answers: ['Historic', 'Modern', 'Old', 'Classic'], correct: 1, fact: 'Modern is the opposite of ancient.' },
+    { category: 'BRITISH ENGLISH', question: 'Which device gives human qualities to non-human things?', answers: ['Metaphor', 'Personification', 'Simile', 'Hyperbole'], correct: 1, fact: 'Personification gives human qualities to objects or ideas.' },
+    { category: 'BRITISH ENGLISH', question: 'Which punctuation mark ends a direct question?', answers: ['Full stop', 'Exclamation mark', 'Semicolon', 'Question mark'], correct: 3, fact: 'A direct question ends with a question mark.' },
+    { category: 'BRITISH ENGLISH', question: 'A word that describes a noun is called an:', answers: ['Adverb', 'Pronoun', 'Adjective', 'Preposition'], correct: 2, fact: 'Adjectives describe nouns and pronouns.' },
+    { category: 'BRITISH ENGLISH', question: 'Which sentence uses the correct subject-verb agreement?', answers: ['She go to school every day.', 'She goes to school every day.', 'She going to school every day.', 'She gone to school every day.'], correct: 1, fact: 'With “she,” the verb takes the singular form “goes.”' },
+    { category: 'BRITISH ENGLISH', question: 'A word that shows a relationship between nouns and other words is a:', answers: ['Conjunction', 'Preposition', 'Interjection', 'Verb'], correct: 1, fact: 'Prepositions show relationship in time, place, or direction.' },
+    { category: 'BRITISH ENGLISH', question: 'Which sentence is written in passive voice?', answers: ['The teacher praised the student.', 'The student was praised by the teacher.', 'The student praises the teacher.', 'The teacher is praising the student.'], correct: 1, fact: 'Passive voice makes the receiver of the action the subject.' },
+    { category: 'BRITISH ENGLISH', question: 'Which word is a synonym for “brief”?', answers: ['Long', 'Short', 'Wide', 'Late'], correct: 1, fact: 'Brief means short in duration or length.' },
+    { category: 'BRITISH ENGLISH', question: 'Which word is the correct plural of “child”?', answers: ['Childs', 'Children', 'Childes', 'Childrens'], correct: 1, fact: 'The plural of child is children.' },
+  ],
+  civicEducation: [
+    { category: 'CIVIC EDUCATION', question: 'A citizen gains citizenship primarily through birth or naturalisation.', answers: ['Birth or naturalisation', 'Buying a house', 'Having a visa', 'Marriage only'], correct: 0, fact: 'Citizenship is usually acquired by birth or naturalisation.' },
+    { category: 'CIVIC EDUCATION', question: 'Fundamental rights are usually contained in the:', answers: ['Constitution', 'Traffic code', 'School handbook', 'Newspaper'], correct: 0, fact: 'A constitution contains the rights and powers of the state and citizens.' },
+    { category: 'CIVIC EDUCATION', question: 'The principle that no person is above the law is called:', answers: ['Rule of law', 'Rule of force', 'Majority rule', 'State immunity'], correct: 0, fact: 'Rule of law means the law binds everyone equally.' },
+    { category: 'CIVIC EDUCATION', question: 'A democracy is best described as government by:', answers: ['The monarch', 'The army', 'The people', 'A single leader'], correct: 2, fact: 'Democracy is government of the people, by the people, and for the people.' },
+    { category: 'CIVIC EDUCATION', question: 'Voting is an example of:', answers: ['Civil disobedience', 'Civic responsibility', 'Tax evasion', 'Private business'], correct: 1, fact: 'Voting is a way citizens participate and fulfil civic responsibility.' },
+    { category: 'CIVIC EDUCATION', question: 'Which is a civic duty?', answers: ['Paying taxes', 'Keeping a private car', 'Watching television', 'Buying foreign goods'], correct: 0, fact: 'Paying taxes supports public services and government functions.' },
+    { category: 'CIVIC EDUCATION', question: 'A law made by the legislature is called a:', answers: ['Executive order', 'Judgment', 'Act', 'Constitution'], correct: 2, fact: 'An act is a law enacted by the legislature.' },
+    { category: 'CIVIC EDUCATION', question: 'A society where people live together peacefully under shared laws is known as:', answers: ['Anarchy', 'Civil society', 'Military rule', 'Isolation'], correct: 1, fact: 'Civil society includes organised groups and institutions beyond the state.' },
+    { category: 'CIVIC EDUCATION', question: 'Which is a basic right of a citizen?', answers: ['Freedom of expression', 'Forced labour', 'Unlimited property seizure', 'No education'], correct: 0, fact: 'Freedom of expression is a core civil liberty in democratic systems.' },
+    { category: 'CIVIC EDUCATION', question: 'National service is an example of:', answers: ['A private business activity', 'A civic obligation', 'A marriage rite', 'A personal hobby'], correct: 1, fact: 'National service can be part of a country’s civic obligations.' },
+  ],
+  government: [
+    { category: 'GOVERNMENT', question: 'Which ideology is based on common ownership of production?', answers: ['Capitalism', 'Communism', 'Feudalism', 'Fascism'], correct: 1, fact: 'Communism advocates common ownership and a classless society.' },
+    { category: 'GOVERNMENT', question: 'Supreme authority within a state is called:', answers: ['Sovereignty', 'Legitimacy', 'Autocracy', 'Pluralism'], correct: 0, fact: 'Sovereignty is the supreme authority of the state.' },
+    { category: 'GOVERNMENT', question: 'A single ruler with unchecked power is practicing:', answers: ['Oligarchy', 'Autocracy', 'Democracy', 'Aristocracy'], correct: 1, fact: 'Autocracy is rule by one person with broad, often unchecked authority.' },
+    { category: 'GOVERNMENT', question: 'The rule of law means:', answers: ['The judge is above the law', 'No one is above the law', 'Only leaders obey the law', 'The law is optional'], correct: 1, fact: 'The rule of law implies equal application of law to everyone.' },
+    { category: 'GOVERNMENT', question: 'Which document limits government power and protects rights?', answers: ['A budget', 'A constitution', 'A manifesto', 'A police report'], correct: 1, fact: 'A constitution defines the structure and limits of government.' },
+    { category: 'GOVERNMENT', question: 'A government run by the people is called:', answers: ['Monarchy', 'Democracy', 'Autocracy', 'Theocracy'], correct: 1, fact: 'Democracy gives authority to the people.' },
+    { category: 'GOVERNMENT', question: 'Power shared among several institutions is called:', answers: ['Separation of powers', 'Pluralism', 'Monopoly', 'Feudalism'], correct: 0, fact: 'Separation of powers prevents any one branch from dominating.' },
+    { category: 'GOVERNMENT', question: 'A system in which political power is held by a few is:', answers: ['Oligarchy', 'Democracy', 'Socialism', 'Republic'], correct: 0, fact: 'Oligarchy is rule by a small group.' },
+    { category: 'GOVERNMENT', question: 'Which of the following is a duty of citizens?', answers: ['Paying taxes', 'Ignoring school rules', 'Destroying public property', 'Refusing to vote'], correct: 0, fact: 'Citizens pay taxes to support public services.' },
+    { category: 'GOVERNMENT', question: 'The branch that interprets laws is the:', answers: ['Legislature', 'Executive', 'Judiciary', 'Police'], correct: 2, fact: 'The judiciary interprets laws and decides disputes.' },
+  ],
+  literature: [
+    { category: 'LITERATURE', question: 'Which device is used when a character speaks inner thoughts aloud to the audience?', answers: ['Monologue', 'Soliloquy', 'Aside', 'Dialogue'], correct: 1, fact: 'A soliloquy is a speech in which a character reveals thoughts to the audience.' },
+    { category: 'LITERATURE', question: 'The tragic flaw in a hero is called:', answers: ['Catharsis', 'Hubris', 'Atmosphere', 'Irony'], correct: 1, fact: 'Hubris is excessive pride or self-confidence, often the hero’s tragic flaw.' },
+    { category: 'LITERATURE', question: 'A deliberate contrast between appearance and reality is called:', answers: ['Irony', 'Personification', 'Rhythm', 'Metaphor'], correct: 0, fact: 'Irony creates a contrast between expectation and reality.' },
+    { category: 'LITERATURE', question: 'The final emotional release in a tragedy is called:', answers: ['Tone', 'Catharsis', 'Dialogue', 'Setting'], correct: 1, fact: 'Catharsis is the emotional release felt by the audience.' },
+    { category: 'LITERATURE', question: 'A play that is intended to amuse and entertain is called:', answers: ['Tragedy', 'Comedy', 'Epic', 'Ballad'], correct: 1, fact: 'Comedy aims to amuse and often ends happily.' },
+    { category: 'LITERATURE', question: 'A speech made to the audience while others are on stage is:', answers: ['Monologue', 'Aside', 'Soliloquy', 'Prologue'], correct: 1, fact: 'An aside is a brief speech directed to the audience.' },
+    { category: 'LITERATURE', question: 'A comparison using “like” or “as” is a:', answers: ['Metaphor', 'Simile', 'Alliteration', 'Assonance'], correct: 1, fact: 'A simile compares two things using “like” or “as”.' },
+    { category: 'LITERATURE', question: 'What is the term for a character with both good and bad qualities?', answers: ['Antihero', 'Villain', 'Narrator', 'Foil'], correct: 0, fact: 'An antihero is a central character with flawed or mixed traits.' },
+    { category: 'LITERATURE', question: 'A humorous scene used to relieve tension is called:', answers: ['A soliloquy', 'Comic relief', 'A climax', 'A prologue'], correct: 1, fact: 'Comic relief temporarily relieves dramatic tension.' },
+    { category: 'LITERATURE', question: 'The main idea or message in a literary text is the:', answers: ['Theme', 'Tone', 'Plot', 'Character'], correct: 0, fact: 'Theme is the central idea or message explored in a text.' },
+  ],
+  mathematics: [
+    { category: 'MATHEMATICS', question: 'Solve for x: x + 3 = 23', answers: ['20', '19', '18', '17'], correct: 0, fact: 'Subtract 3 from both sides: x = 20.' },
+    { category: 'MATHEMATICS', question: 'Solve for x: 2x + 6 = 20', answers: ['5', '6', '7', '8'], correct: 2, fact: '2x = 14 so x = 7.' },
+    { category: 'MATHEMATICS', question: 'Simplify 3x + 5x', answers: ['8x', '15x', 'x', '3x'], correct: 0, fact: '3x and 5x are like terms; combine them to get 8x.' },
+    { category: 'MATHEMATICS', question: 'What is 15% of 200?', answers: ['20', '30', '35', '40'], correct: 1, fact: '10% of 200 is 20 and 5% is 10, so 15% is 30.' },
+    { category: 'MATHEMATICS', question: 'The sum of the angles in a triangle is:', answers: ['90°', '180°', '270°', '360°'], correct: 1, fact: 'The interior angles of a triangle add up to 180°.' },
+    { category: 'MATHEMATICS', question: 'The value of 9² is:', answers: ['18', '72', '81', '99'], correct: 2, fact: '9² = 9 × 9 = 81.' },
+    { category: 'MATHEMATICS', question: 'What is the mean of 4, 6, and 8?', answers: ['5', '6', '7', '18'], correct: 1, fact: 'The mean is (4 + 6 + 8) ÷ 3 = 6.' },
+    { category: 'MATHEMATICS', question: 'Solve for x: 3x = 21', answers: ['5', '6', '7', '8'], correct: 2, fact: 'Divide both sides by 3 to get x = 7.' },
+    { category: 'MATHEMATICS', question: 'The perimeter of a square with side 7 cm is:', answers: ['14 cm', '21 cm', '28 cm', '49 cm'], correct: 2, fact: 'Perimeter = 4 × 7 = 28 cm.' },
+    { category: 'MATHEMATICS', question: 'What is 2/3 of 30?', answers: ['10', '15', '20', '25'], correct: 2, fact: '30 ÷ 3 = 10, then 10 × 2 = 20.' },
   ],
   physics: [
     { category: 'PHYSICS', question: 'What is the SI unit of force?', answers: ['Joule', 'Newton', 'Watt', 'Pascal'], correct: 1, fact: 'Force is measured in newtons.' },
@@ -180,6 +252,12 @@ const subjectLabels = {
   economics: 'Economics',
   commerce: 'Commerce',
   businessStudies: 'Business Studies',
+  accounting: 'Principles of Accounting',
+  britishEnglish: 'British Curriculum English',
+  civicEducation: 'Civic Education',
+  government: 'Government',
+  literature: 'Literature in English',
+  mathematics: 'Mathematics',
 };
 
 const CURRICULUM_SUBJECT_LABELS = {
@@ -188,11 +266,18 @@ const CURRICULUM_SUBJECT_LABELS = {
   english: 'English Studies',
 };
 
-const departmentSubjects = {
-  science: ['math', 'science', 'english', 'physics', 'chemistry', 'biology', 'geography'],
-  commercial: ['math', 'english', 'economics', 'commerce', 'businessStudies', 'geography'],
-  arts: ['english', 'science', 'geography', 'economics', 'businessStudies'],
+const questionBankSubjectGroups = {
+  science: ['math', 'science', 'english', 'physics', 'chemistry', 'biology', 'geography', 'civicEducation', 'government'],
+  commercial: ['math', 'english', 'economics', 'commerce', 'businessStudies', 'geography', 'accounting', 'government', 'mathematics'],
+  arts: ['english', 'science', 'geography', 'economics', 'businessStudies', 'britishEnglish', 'civicEducation', 'literature', 'government', 'mathematics'],
 };
+
+const departmentSubjects = Object.fromEntries(
+  Object.entries(questionBankSubjectGroups).map(([department, subjects]) => [
+    department,
+    subjects.filter((subject) => Object.prototype.hasOwnProperty.call(questionBank, subject)),
+  ])
+);
 
 const setupPanel = document.querySelector('#setup-panel');
 const signInPanel = document.querySelector('#sign-in-panel');
@@ -273,10 +358,12 @@ function shuffle(items) {
 }
 
 function getTimeLimitSeconds(questionTotal) {
+  if (!SECONDS_PER_QUESTION) return 0;
   return Math.max(0, Number(questionTotal) || 0) * SECONDS_PER_QUESTION;
 }
 
 function formatTimeLimit(seconds) {
+  if (!seconds) return 'No time limit';
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   if (!minutes) return `${remainingSeconds} seconds`;
@@ -288,6 +375,11 @@ function updateRoundTimeDisplay(questionTotal = Number(questionCountSelect.value
   if (!questionTotal) {
     timeLimitDisplay.textContent = 'Choose a question count';
     setupTimeSummary.textContent = 'Time set by question count';
+    return;
+  }
+  if (!SECONDS_PER_QUESTION) {
+    timeLimitDisplay.textContent = 'No time limit';
+    setupTimeSummary.textContent = 'No time limit';
     return;
   }
   const email = candidateEmailInput.value.trim();
@@ -375,6 +467,8 @@ function getQuestionPoolForDifficulty(subject, difficultyLevel) {
   if (difficultyLevel === 'nigeria-jss1') {
     return curriculumQuestionBank[subject] || questionBank[subject] || [];
   }
+  const importedPool = window.DY_IMPORTED_QUESTION_BANK?.[subject];
+  if (Array.isArray(importedPool) && importedPool.length) return importedPool;
   const examBank = window.DY_EXAM_QUESTION_BANK || {};
   const examPool = examBank[difficultyLevel]?.[subject];
   if (Array.isArray(examPool) && examPool.length) return examPool;
@@ -394,10 +488,11 @@ function updateDifficultyHint() {
 
 function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
   const pool = getQuestionPoolForDifficulty(subject, difficultyLevel);
+  const importedPool = window.DY_IMPORTED_QUESTION_BANK?.[subject] || [];
   const examPool = window.DY_EXAM_QUESTION_BANK?.[difficultyLevel]?.[subject];
   const allPool = difficultyLevel === 'nigeria-jss1'
     ? (curriculumQuestionBank[subject] || questionBank[subject] || [])
-    : (Array.isArray(examPool) && examPool.length ? examPool : (questionBank[subject] || []));
+    : (Array.isArray(importedPool) && importedPool.length ? importedPool : ((Array.isArray(examPool) && examPool.length ? examPool : (questionBank[subject] || []))));
   if (!pool.length || count <= 0) return [];
 
   const uniqueEntries = new Set();
@@ -813,6 +908,11 @@ async function submitAccessRequest(event) {
 }
 
 function updateTimer() {
+  if (!SECONDS_PER_QUESTION) {
+    quizTimer.textContent = 'No time limit';
+    quizTimer.classList.remove('timer-warning');
+    return;
+  }
   const minutes = Math.floor(timeRemaining / 60);
   const seconds = timeRemaining % 60;
   quizTimer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
@@ -828,6 +928,10 @@ function updateTimer() {
 
 function startTimer() {
   clearInterval(timerInterval);
+  if (!SECONDS_PER_QUESTION) {
+    quizTimer.textContent = 'No time limit';
+    return;
+  }
   updateTimer();
   timerInterval = setInterval(updateTimer, 1000);
 }
