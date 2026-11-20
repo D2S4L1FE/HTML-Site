@@ -1,6 +1,6 @@
 # You Matter — with Distinct Youngsters
 
-The installable PWA is named **You Matter**. It opens on **Distinct Youngsters**, the complete quiz experience, and includes a You Matter link for reflection, stories, gallery, and live-session features. The You Matter page remains in `D2S.html` so its content stays separate from quiz logic while both experiences are connected in the app.
+The installable PWA is named **You Matter**. It opens on **Distinct Youngsters**, the complete quiz experience, and includes a You Matter link for reflection, stories, gallery, and live-session features. The You Matter page and all of its local photos and support page are packaged inside this PWA folder at `D2S.html`, `support.html`, and `New folder/`, so navigation and cached assets no longer depend on files outside the app folder.
 
 ## Distinct Youngsters — School Subject Quiz
 
