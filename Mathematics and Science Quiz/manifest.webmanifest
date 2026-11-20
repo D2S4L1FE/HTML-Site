@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Distinct Youngsters School Subject Quiz",
-  "short_name": "Distinct Youngsters",
-  "description": "An installable secondary-school quiz for Science, Commercial, and Arts subjects.",
+  "name": "You Matter",
+  "short_name": "You Matter",
+  "description": "An all-in-one You Matter reflection and Distinct Youngsters learning app.",
   "lang": "en",
   "start_url": "./",
   "scope": "./",
@@ -11,7 +11,7 @@
   "orientation": "portrait",
   "theme_color": "#071426",
   "background_color": "#071426",
-  "categories": ["education", "games"],
+  "categories": ["education", "games", "lifestyle"],
   "icons": [
     {
       "src": "icons/app-icon.svg",

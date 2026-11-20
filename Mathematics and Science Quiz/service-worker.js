@@ -1,4 +1,4 @@
-const CACHE_NAME = 'distinct-youngsters-v24';
+const CACHE_NAME = 'you-matter-v25';
 const APP_FILES = [
   './',
   './index.html',
@@ -25,7 +25,7 @@ self.addEventListener('activate', (event) => {
     caches.keys()
       .then((cacheNames) => Promise.all(
         cacheNames
-          .filter((cacheName) => cacheName.startsWith('distinct-youngsters-') && cacheName !== CACHE_NAME)
+          .filter((cacheName) => (cacheName.startsWith('you-matter-') || cacheName.startsWith('distinct-youngsters-')) && cacheName !== CACHE_NAME)
           .map((cacheName) => caches.delete(cacheName)),
       ))
       .then(() => self.clients.claim()),

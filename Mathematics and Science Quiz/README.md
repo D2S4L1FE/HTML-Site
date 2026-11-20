@@ -1,4 +1,8 @@
-# Distinct Youngsters — School Subject Quiz
+# You Matter — with Distinct Youngsters
+
+The installable PWA is named **You Matter**. It opens on **Distinct Youngsters**, the complete quiz experience, and includes a You Matter link for reflection, stories, gallery, and live-session features. The You Matter page remains in `D2S.html` so its content stays separate from quiz logic while both experiences are connected in the app.
+
+## Distinct Youngsters — School Subject Quiz
 
 A responsive, accessible, installable web app for curious minds, built with plain HTML, CSS, and JavaScript. Create a learner profile with name, age, class, and email; the same browser keeps the learner signed in until they choose **Sign out**, and restores their details after reload. Choose a question-bank track (WAEC, NECO, JAMB/UTME, GCSE, or Nigeria JSS 1), a Science, Commercial, or Arts department, and a subject. The Nigeria JSS 1 track includes 100 Mathematics, 100 Basic Science, and 100 English Studies questions, each paired with its answer and explanation from the editable Markdown sources in `question-bank/`. Choose 20, 30, 40, 50, or (for a 100-question bank) 100 questions; the quiz time is calculated automatically at 45 seconds (three-quarter minute) per question actually included in the round. During the first seven days after the first quiz, the selected round is available in full. After the trial, a selected round is limited to 18 questions; a full-access request appears after that capped round. Answers receive instant explanations, with a percentage score at the end. Reflection pathways and their free four-page stories are on the separate You Matter page, D2S.html.
 
@@ -10,7 +14,7 @@ For a quick preview, open `index.html` in a modern web browser. No build step or
 
 The app must be served from a secure HTTPS website to be installable and to enable offline support. Deploy this folder to a static HTTPS host (for example, GitHub Pages), then open the published address:
 
-- **Windows:** In Microsoft Edge or Chrome, use the install icon in the address bar or the browser menu and choose **Install Distinct Youngsters**.
+- **Windows:** In Microsoft Edge or Chrome, use the install icon in the address bar or the browser menu and choose **Install You Matter**.
 - **Android:** In Chrome, tap the browser menu and choose **Install app** or **Add to Home screen**.
 
 After the first online visit, the app shell and all three JSS 1 question-and-answer source files are cached for offline use. The full JSS 1 bank can then be loaded and played without internet. Profile registration emails and access requests still require a connection. Opening the local `index.html` file is only a preview; browser installation and service workers do not work from `file://` URLs.

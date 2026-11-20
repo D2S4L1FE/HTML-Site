@@ -795,7 +795,7 @@ function buildAccessRequestBody(details) {
   return [
     'Hello Admin,',
     '',
-    'A participant has requested full access for the Distinct Youngsters quiz.',
+    'A participant has requested full access for the Distinct Youngsters quiz in the You Matter app.',
     `Name: ${details.name || 'Participant'}`,
     `Email: ${details.email || 'Unknown'}`,
     `Department: ${details.department || 'Not stated'}`,
@@ -805,7 +805,7 @@ function buildAccessRequestBody(details) {
     'Please approve or decline this access request.',
     '',
     'Regards,',
-    'Distinct Youngsters App',
+    'You Matter — Distinct Youngsters',
   ].join('\n');
 }
 
@@ -1181,7 +1181,7 @@ window.addEventListener('appinstalled', () => {
   pendingInstallPrompt = null;
   installButton.hidden = true;
   installStatus.hidden = false;
-  installStatus.textContent = 'Distinct Youngsters is installed and ready to use.';
+  installStatus.textContent = 'You Matter is installed and ready to use.';
 });
 installButton.addEventListener('click', async () => {
   if (!pendingInstallPrompt) {
