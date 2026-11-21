@@ -302,10 +302,12 @@ h1 span { color: #ffe16b; }
 .access-choice-group input { accent-color: #ffe16b; }
 .payment-instructions { margin: 0; padding: 11px; border-left: 3px solid #ffe16b; color: #c3cee0; background: #172944; font-size: 11px; line-height: 1.6; }
 .access-form-status { margin: 0; padding: 11px; border: 1px solid #42617e; border-radius: 7px; color: #a7eafa; background: #102d46; font-size: 11px; line-height: 1.6; }
-/* You Matter launch link */
-.you-matter-link { flex: 0 0 auto; min-height: 34px; display: inline-flex; align-items: center; justify-content: center; padding: 0 10px; border: 1px solid #3b5274; border-radius: 6px; color: #ffe16b; background: #11233d; text-decoration: none; font-size: 10px; font-weight: 700; }
-.you-matter-link:hover { border-color: #4bc8e8; background: #1b3151; }
+.quiz-navigation { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+.button-secondary { border: 1px solid #d4ddd1; color: #60705f; background: #f8faf6; }
+.button-secondary:hover:not(:disabled) { border-color: #a8c399; background: #eef3e9; }
+.button-secondary:disabled { cursor: not-allowed; opacity: .45; }
 @media (max-width: 480px) {
   .access-modal { padding: 12px; }
   .access-modal-dialog { max-height: 94vh; overflow-y: auto; }
+  .quiz-navigation { grid-template-columns: 1fr; }
 }

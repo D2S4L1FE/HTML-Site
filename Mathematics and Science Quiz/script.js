@@ -5,15 +5,23 @@
   activeEmail: 'distinct-youngsters-active-email',
 };
 const ADMIN_EMAIL = 'adesanya.adegbemi@gmail.com';
-const FREE_QUESTION_LIMIT = 18;
+const FREE_QUESTION_LIMIT = 10;
 const SECONDS_PER_QUESTION = 0;
 const TRIAL_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 const EXAM_STANDARD_LABELS = {
-  waec: 'WAEC',
-  neco: 'NECO',
-  jamb: 'JAMB / UTME',
-  gcse: 'GCSE',
-  'nigeria-jss1': 'Nigeria JSS 1',
+  year6: 'Year 6',
+  year7: 'Year 7',
+  year8: 'Year 8',
+  year9: 'Year 9',
+  jss1: 'JSS 1',
+  jss2: 'JSS 2',
+  jss3: 'JSS 3',
+  ss1: 'SS 1',
+  ss2: 'SS 2',
+  ss3: 'SS 3',
+  year10: 'Year 10',
+  year11: 'Year 11',
+  year12: 'Year 12',
 };
 const CURRICULUM_BANK_SOURCES = {
   math: './question-bank/nigeria-jss1-mathematics.md',
@@ -318,6 +326,7 @@ const questionText = document.querySelector('#question-text');
 const answersElement = document.querySelector('#answers');
 const feedback = document.querySelector('#feedback');
 const nextButton = document.querySelector('#next-button');
+const previousButton = document.querySelector('#previous-button');
 const candidateSummary = document.querySelector('#candidate-summary');
 const resultCandidate = document.querySelector('#result-candidate');
 const resultTitle = document.querySelector('#result-title');
@@ -347,6 +356,7 @@ let curriculumQuestionBank = {};
 let curriculumBankLoaded = false;
 let curriculumBankLoadError = false;
 let curriculumBankReady = Promise.resolve();
+let answerHistory = [];
 
 function shuffle(items) {
   const cloned = [...items];
@@ -407,13 +417,13 @@ function getDifficulty(age, className) {
   const classValue = getClassGrade(className);
   const ageValue = Number(age || 0);
   const gradeValue = classValue ?? (Number.isFinite(ageValue) && ageValue > 0 ? Math.min(12, Math.max(1, Math.ceil(ageValue / 2))) : 8);
-  return gradeValue >= 9 ? 'gcse' : 'elementary';
+  if (gradeValue >= 10) return 'ss';
+  if (gradeValue >= 7) return 'jss';
+  return 'year';
 }
 
 function getSubjectLabel(subject) {
-  return examStandardSelect.value === 'nigeria-jss1'
-    ? (CURRICULUM_SUBJECT_LABELS[subject] || subjectLabels[subject])
-    : subjectLabels[subject];
+  return subjectLabels[subject];
 }
 
 function parseCurriculumMarkdown(markdown, subject) {
@@ -464,40 +474,26 @@ async function loadCurriculumQuestionBank() {
 }
 
 function getQuestionPoolForDifficulty(subject, difficultyLevel) {
-  if (difficultyLevel === 'nigeria-jss1') {
-    return curriculumQuestionBank[subject] || questionBank[subject] || [];
-  }
   const importedPool = window.DY_IMPORTED_QUESTION_BANK?.[subject];
   if (Array.isArray(importedPool) && importedPool.length) return importedPool;
-  const examBank = window.DY_EXAM_QUESTION_BANK || {};
-  const examPool = examBank[difficultyLevel]?.[subject];
-  if (Array.isArray(examPool) && examPool.length) return examPool;
-  const pool = questionBank[subject] || [];
-  return pool;
+  return questionBank[subject] || [];
 }
 
 function updateDifficultyHint() {
   if (!candidateAgeInput.value && !candidateClassInput.value.trim()) {
-    difficultyNote.textContent = 'Choose an examination track or the Nigeria JSS 1 curriculum bank.';
+    difficultyNote.textContent = 'Select JSS, SS, or Year class-level difficulty.';
     return;
   }
   const level = getDifficulty(candidateAgeInput.value, candidateClassInput.value);
-  const stage = level === 'gcse' ? 'senior secondary' : 'junior secondary';
-  difficultyNote.textContent = `Learner stage estimate: ${stage}. Select an examination track or curriculum bank below.`;
+  const stage = level === 'ss' ? 'Senior secondary / Year 10–12' : level === 'jss' ? 'Junior secondary / JSS 1–3' : 'Primary / Year 6–9';
+  difficultyNote.textContent = `Learner stage estimate: ${stage}.`;
 }
 
-function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
+function buildQuestionSet(subject, count, difficultyLevel = 'jss1') {
   const pool = getQuestionPoolForDifficulty(subject, difficultyLevel);
-  const importedPool = window.DY_IMPORTED_QUESTION_BANK?.[subject] || [];
-  const examPool = window.DY_EXAM_QUESTION_BANK?.[difficultyLevel]?.[subject];
-  const allPool = difficultyLevel === 'nigeria-jss1'
-    ? (curriculumQuestionBank[subject] || questionBank[subject] || [])
-    : (Array.isArray(importedPool) && importedPool.length ? importedPool : ((Array.isArray(examPool) && examPool.length ? examPool : (questionBank[subject] || []))));
   if (!pool.length || count <= 0) return [];
-
   const uniqueEntries = new Set();
   const selected = [];
-
   shuffle(pool).forEach((item) => {
     if (selected.length >= count) return;
     const key = `${item.category}::${item.question}`;
@@ -505,17 +501,6 @@ function buildQuestionSet(subject, count, difficultyLevel = 'gcse') {
     uniqueEntries.add(key);
     selected.push(item);
   });
-
-  if (selected.length >= count) return selected.slice(0, count);
-
-  shuffle(allPool).forEach((item) => {
-    if (selected.length >= count) return;
-    const key = `${item.category}::${item.question}`;
-    if (uniqueEntries.has(key)) return;
-    uniqueEntries.add(key);
-    selected.push(item);
-  });
-
   return selected.slice(0, count);
 }
 
@@ -532,9 +517,11 @@ function updateQuestionCountOptions() {
     questionBankNote.hidden = true;
     return;
   }
-  const availableCounts = standard === 'nigeria-jss1' && !curriculumQuestionBank[subject]
-    ? [Math.min(pool.length, 20)]
-    : (pool.length >= 100 ? [20, 30, 40, 50, 100] : [20, 30, 40, 50]);
+  const availableCounts = pool.length >= 100
+    ? [20, 30, 40, 50, 100]
+    : pool.length >= 50
+      ? [20, 30, 40, 50]
+      : [Math.min(pool.length, 10), Math.min(pool.length, 20)].filter((count, index, counts) => count > 0 && counts.indexOf(count) === index);
   questionCountSelect.replaceChildren(...availableCounts.map((count) => new Option(`${count} questions`, String(count))));
   const nextValue = availableCounts.includes(previousCount) ? String(previousCount) : String(availableCounts[0]);
   questionCountSelect.value = nextValue;
@@ -542,21 +529,8 @@ function updateQuestionCountOptions() {
   setupQuestionSummary.textContent = `${nextValue} questions`;
   updateRoundTimeDisplay(Number(nextValue));
   questionBankNote.hidden = false;
-  const curriculumPool = curriculumQuestionBank[subject];
-  const licensedPool = window.DY_EXAM_QUESTION_BANK?.[standard]?.[subject];
-  if (standard === 'nigeria-jss1' && curriculumPool?.length) {
-    questionBankNote.textContent = `${curriculumPool.length} Nigeria JSS 1 ${getSubjectLabel(subject)} questions with matched answers and explanations. This working draft is stored with the app for offline use.`;
-  } else if (standard === 'nigeria-jss1' && curriculumBankLoadError) {
-    questionBankNote.textContent = `The JSS 1 bank could not be loaded. The built-in sample is being used; reconnect and reload to download the local bank for offline use.`;
-  } else if (standard === 'nigeria-jss1' && !curriculumBankLoaded) {
-    questionBankNote.textContent = 'Loading the Nigeria JSS 1 question bank…';
-  } else if (standard === 'nigeria-jss1') {
-    questionBankNote.textContent = `No Nigeria JSS 1 ${getSubjectLabel(subject)} bank is available yet. The ${pool.length}-question built-in sample is not curriculum-verified.`;
-  } else if (Array.isArray(licensedPool) && licensedPool.length) {
-    questionBankNote.textContent = `${licensedPool.length} questions in the ${EXAM_STANDARD_LABELS[standard]} track, with source and licence metadata. Original items are exam-style practice, not official past-paper questions.`;
-  } else {
-    questionBankNote.textContent = `${pool.length} built-in sample questions. No rights-cleared ${EXAM_STANDARD_LABELS[standard] || 'exam'} set is connected for this subject yet; these samples are not verified to that syllabus.`;
-  }
+  const selectedLevel = EXAM_STANDARD_LABELS[standard] || 'Class level';
+  questionBankNote.textContent = `${pool.length} ${getSubjectLabel(subject)} questions available for ${selectedLevel} difficulty. Questions are matched to JSS, SS, or Year-level learning.`;
 }
 
 function updateDepartmentSubjects() {
@@ -687,12 +661,12 @@ function updateTrialStatus(email) {
   }
   const expiresAt = getTrialExpiry(access);
   if (expiresAt === null) {
-    trialStatus.textContent = 'Your 7-day full-access trial starts with your first quiz. After it ends, every selected round is limited to 18 questions.';
+    trialStatus.textContent = 'Your 7-day full-access trial starts with your first quiz. After it ends, every selected round is limited to 10 questions.';
   } else if (Date.now() < expiresAt) {
     const date = new Date(expiresAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-    trialStatus.textContent = `Your 7-day full-access trial ends ${date}. After that, each selected round is limited to 18 questions.`;
+    trialStatus.textContent = `Your 7-day full-access trial ends ${date}. After that, each selected round is limited to 10 questions.`;
   } else {
-    trialStatus.textContent = 'Your free week has ended. Each selected round is limited to 18 questions. Request full access to continue beyond 18.';
+    trialStatus.textContent = 'Your free week has ended. Each selected round is limited to 10 questions. Request full access to continue beyond 10.';
   }
 }
 
@@ -747,7 +721,7 @@ function initialiseProfileControls() {
     signInStatus.hidden = true;
     updateTrialStatus(email);
     candidateNameInput.focus({ preventScroll: true });
-  });
+   });
 
   createProfileButton.addEventListener('click', () => {
     signInPanel.hidden = true;
@@ -786,8 +760,8 @@ function updateParticipantRecord(participant) {
     lastUpdated: new Date().toISOString(),
   };
   const index = records.findIndex((entry) => String(entry.email || '').toLowerCase() === email);
-  if (index >= 0) records[index] = { ...records[index], ...nextRecord };
-  else records.push(nextRecord);
+  if (index >=  0) records[index] = { ...records[index], ...nextRecord };
+     else records.push(nextRecord);
   saveStoredRecords(records);
 }
 
@@ -946,7 +920,6 @@ async function startQuiz(event) {
   }
   if (!setupPanel.reportValidity()) return;
   await curriculumBankReady;
-  if (examStandardSelect.value === 'nigeria-jss1') updateQuestionCountOptions();
 
   candidate = {
     name: candidateNameInput.value.trim(),
@@ -994,6 +967,7 @@ async function startQuiz(event) {
   updateRoundTimeDisplay(questions.length);
   questionIndex = 0;
   score = 0;
+  answerHistory = [];
   timeRemaining = requestedTimeLimit;
 
   setupPanel.hidden = true;
@@ -1012,8 +986,9 @@ function renderQuestion() {
     showResults();
     return;
   }
-  selectedAnswer = null;
-  answered = false;
+  selectedAnswer = answerHistory[questionIndex]?.selectedAnswer ?? null;
+  answered = Boolean(answerHistory[questionIndex]?.answered);
+  previousButton.disabled = questionIndex === 0;
   questionCount.textContent = `QUESTION ${questionIndex + 1} OF ${questions.length}`;
   scoreDisplay.textContent = String(score);
   questionCategory.textContent = current.category;
@@ -1044,11 +1019,24 @@ function renderQuestion() {
     const option = document.createElement('button');
     option.type = 'button';
     option.className = 'answer-option';
-    option.setAttribute('aria-pressed', 'false');
+    option.setAttribute('aria-pressed', String(answered && index === selectedAnswer));
     option.innerHTML = `<span class="answer-letter" aria-hidden="true">${String.fromCharCode(65 + index)}</span><span>${escapeForText(answer)}</span>`;
     option.addEventListener('click', () => selectAnswer(index));
     answersElement.appendChild(option);
   });
+
+  if (answered) {
+    const history = answerHistory[questionIndex];
+    [...answersElement.children].forEach((option, index) => {
+      option.disabled = true;
+      if (index === current.correct) option.classList.add('correct');
+      else if (index === history.selectedAnswer) option.classList.add('incorrect');
+    });
+    feedback.textContent = `${history.correct ? 'That’s right!' : 'Not quite.'} ${current.fact}`;
+    feedback.classList.toggle('is-incorrect', !history.correct);
+    nextButton.disabled = false;
+    nextButton.innerHTML = questionIndex === questions.length - 1 ? 'See my results <span aria-hidden="true">→</span>' : 'Next question <span aria-hidden="true">→</span>';
+  }
   questionText.focus({ preventScroll: true });
 }
 
@@ -1063,6 +1051,12 @@ function selectAnswer(index) {
   feedback.classList.remove('is-incorrect');
 }
 
+function previousQuestion() {
+  if (questionIndex <= 0) return;
+  questionIndex -= 1;
+  renderQuestion();
+}
+
 function checkAnswer() {
   if (answered) {
     questionIndex += 1;
@@ -1075,7 +1069,11 @@ function checkAnswer() {
   const current = questions[questionIndex];
   answered = true;
   const correct = selectedAnswer === current.correct;
-  if (correct) score += 1;
+  answerHistory[questionIndex] = { selectedAnswer, answered, correct };
+
+  if (correct) {
+    score += 1;
+  }
 
   [...answersElement.children].forEach((option, index) => {
     option.disabled = true;
@@ -1171,6 +1169,12 @@ questionCountSelect.addEventListener('change', () => {
   setupQuestionSummary.textContent = `${questionCountSelect.value} questions`;
   updateRoundTimeDisplay();
 });
+previousButton.addEventListener('click', () => {
+  if (questionIndex > 0) {
+    questionIndex -= 1;
+    renderQuestion();
+  }
+});
 
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
@@ -1212,14 +1216,7 @@ if (window.matchMedia('(display-mode: standalone)').matches || navigator.standal
 updateRoundTimeDisplay();
 updateDifficultyHint();
 updateDepartmentSubjects();
-curriculumBankReady = loadCurriculumQuestionBank()
-  .then(() => {
-    if (subjectSelect.value && examStandardSelect.value === 'nigeria-jss1') updateQuestionCountOptions();
-  })
-  .catch(() => {
-    curriculumBankLoadError = true;
-    if (subjectSelect.value && examStandardSelect.value === 'nigeria-jss1') updateQuestionCountOptions();
-  });
+curriculumBankReady = Promise.resolve();
 updateTrialStatus('');
 initialiseAccessControls();
 restoreActiveProfile();
